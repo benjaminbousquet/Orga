@@ -1,9 +1,8 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mécanismes animés</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +23,8 @@
 :root[data-theme="dark"]{
   --bg:#0f141a; --paper:#161d26; --ink:#e4e8ee; --muted:#93a0b2; --rule:#2a3442;
   --accent:#7fb3dd; --accent-soft:#1f2c3a; --arrow:#ff7070; color-scheme:dark }
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
+[hidden]{display:none!important}
 .app{max-width:1180px;margin:0 auto;padding-block:20px 40px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   display:grid;gap:16px}
@@ -32,13 +32,35 @@ header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-be
 h1{font-family:var(--display);font-weight:600;font-size:clamp(1.6rem,3vw,2.1rem);margin:0;text-wrap:balance}
 .sub{color:var(--muted);margin:0}
 .viewmeca{display:grid;gap:16px}
-.views{display:flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden}
-.view-btn{font:600 14px var(--body);background:var(--paper);color:var(--muted);border:0;padding:7px 14px;cursor:pointer}
-.view-btn+.view-btn{border-left:1px solid var(--rule)}
-.view-btn[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
-/* atlas corrigés : la feuille reste claire dans les deux thèmes (figures RDKit noires sur fond transparent) */
-.atlas{display:grid;gap:16px}
-.atab{max-width:19em;overflow:hidden;text-overflow:ellipsis}
+.intro{margin:0;color:var(--muted)}
+/* deux parties du site : grands onglets soulignés */
+header.top{display:grid;gap:12px;justify-content:normal;align-items:normal}
+.maintabs{display:flex;gap:4px;border-bottom:2px solid var(--rule)}
+.mtab{display:grid;gap:1px;text-align:left;background:transparent;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;
+  padding:8px 16px 10px;cursor:pointer;color:var(--muted);border-radius:8px 8px 0 0}
+.mtab:hover{color:var(--ink);background:var(--accent-soft)}
+.mtab-t{font:600 1.08rem var(--display)}
+.mtab-s{font-size:.82rem}
+.mtab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.mtab[aria-selected="true"] .mtab-t{color:var(--accent)}
+@media (max-width:560px){.mtab{padding:8px 10px}.mtab-s{display:none}}
+/* atlas : liste de chapitres à gauche, contenu à droite ; la feuille reste claire dans les deux thèmes */
+.atlas{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.agrid{display:grid;grid-template-columns:250px minmax(0,1fr);gap:20px;align-items:start}
+.alist{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;background:var(--paper);border:1px solid var(--rule);
+  border-radius:10px;padding:10px 8px;display:grid;gap:2px}
+.alist h4{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:8px 8px 4px}
+.alist h4:first-child{margin-top:2px}
+.aitem{display:flex;gap:8px;align-items:baseline;text-align:left;font:14px var(--body);color:var(--ink);background:transparent;border:0;
+  border-radius:6px;padding:5px 8px;cursor:pointer}
+.aitem:hover{background:var(--accent-soft)}
+.aitem[aria-current="true"]{background:var(--accent);color:var(--paper)}
+.aitem .an{font-variant-numeric:tabular-nums;min-width:1.6em;color:inherit;opacity:.75;font-weight:600}
+.asel-l{display:none;gap:4px;font-size:.9rem;color:var(--muted)}
+.asel-l{min-width:0}
+.asel{width:100%;min-width:0;font:15px var(--body);padding:7px 8px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink)}
+.abody{display:grid;gap:16px;min-width:0}
+@media (max-width:900px){.agrid{grid-template-columns:minmax(0,1fr)}.alist{display:none}.asel-l{display:grid}}
 .achap{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
 .achap h2{font-family:var(--display);font-weight:500;font-size:1.3rem;margin:0}
 .achap span{color:var(--muted)}
@@ -144,19 +166,26 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 <svg id="measure" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;visibility:hidden"><text class="lbl" id="mtext"></text></svg>
 
 <div class="app">
-  <header>
-    <h1>Mécanismes animés</h1>
-    <div class="views" role="group" aria-label="Affichage">
-      <button class="view-btn" id="vb-meca" aria-pressed="true">Mécanismes</button>
-      <button class="view-btn" id="vb-atlas" aria-pressed="false">Atlas corrigés</button>
-    </div>
+  <header class="top">
+    <h1>Chimie en PCSI et PC</h1>
+    <nav class="maintabs" role="tablist" aria-label="Parties du site">
+      <button class="mtab" role="tab" id="vb-meca" aria-selected="true" aria-controls="view-meca">
+        <span class="mtab-t">Mécanismes animés</span><span class="mtab-s">chimie organique, étape par étape</span></button>
+      <button class="mtab" role="tab" id="vb-atlas" aria-selected="false" aria-controls="view-atlas">
+        <span class="mtab-t">Atlas d'entraînement</span><span class="mtab-s">exercices et corrigés, tous chapitres</span></button>
+    </nav>
   </header>
-  <section id="view-atlas" class="atlas" hidden>
-    <nav class="tabs" id="atlas-tabs" aria-label="Chapitres des atlas"></nav>
-    <div id="atlas-body"></div>
+  <section id="view-atlas" class="atlas" role="tabpanel" aria-labelledby="vb-atlas" hidden>
+    <div class="agrid">
+      <nav class="alist" id="atlas-tabs" aria-label="Chapitres des atlas"></nav>
+      <label class="asel-l" for="atlas-select">Chapitre
+        <select id="atlas-select" class="asel"></select></label>
+      <div id="atlas-body" class="abody"></div>
+    </div>
   </section>
-  <div id="view-meca" class="viewmeca">
-  <nav class="tabs" role="tablist" id="tabs" aria-label="Mécanismes"></nav>
+  <div id="view-meca" class="viewmeca" role="tabpanel" aria-labelledby="vb-meca">
+  <p class="intro">Choisissez un mécanisme, puis avancez avec les flèches ← → ou le bouton Lecture.</p>
+  <nav class="tabs" id="tabs" aria-label="Mécanismes"></nav>
   <div class="main">
     <section class="stage">
       <div class="mech-title"><h2 id="mname"></h2><span id="mreac"></span></div>
@@ -193,7 +222,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         <dl id="facts"></dl>
       </div>
       <div class="card" id="atlas-links-card" hidden>
-        <h4>S'entraîner : atlas</h4>
+        <h4>Exercices d'atlas liés</h4>
         <ul class="alinks" id="atlas-links"></ul>
       </div>
     </aside>
@@ -1420,22 +1449,25 @@ let ATLAS=[], atlasCourant=null;
 const atlasCache={};
 function setView(v){
   $('view-meca').hidden = v!=='meca'; $('view-atlas').hidden = v!=='atlas';
-  $('vb-meca').setAttribute('aria-pressed', v==='meca'); $('vb-atlas').setAttribute('aria-pressed', v==='atlas');
+  $('vb-meca').setAttribute('aria-selected', v==='meca'); $('vb-atlas').setAttribute('aria-selected', v==='atlas');
   if(v==='atlas') stopPlay();
 }
 async function loadIndex(){
   try{ const r=await fetch('atlas/index.json',{cache:'no-cache'}); if(!r.ok) throw 0; ATLAS=await r.json(); }catch(e){ ATLAS=[]; }
-  const t=$('atlas-tabs'); t.innerHTML='';
+  const t=$('atlas-tabs'), sel=$('atlas-select'); t.innerHTML=''; sel.innerHTML='';
+  const maj = s => s[0].toUpperCase()+s.slice(1);
   for(const g of ['PCSI','PC']){
-    const row=document.createElement('div'); row.className='tabrow';
-    const lab=document.createElement('span'); lab.className='tabgrp'; lab.textContent=g; row.append(lab);
+    const h=document.createElement('h4'); h.textContent=g; t.append(h);
+    const og=document.createElement('optgroup'); og.label=g; sel.append(og);
     for(const c of ATLAS.filter(c=>c.classe===g)){
-      const b=document.createElement('button'); b.className='tab atab'; b.dataset.a=c.id;
-      b.innerHTML=typeof c.chap==='number' ? `Ch. ${c.chap} · ${c.titre}` : c.titre[0].toUpperCase()+c.titre.slice(1);
-      b.title=b.textContent; b.onclick=()=>openAtlas(c.id); row.append(b);
+      const num = typeof c.chap==='number' ? c.chap : '';
+      const b=document.createElement('button'); b.className='aitem'; b.dataset.a=c.id;
+      b.innerHTML=`<span class="an">${num}</span><span>${maj(c.titre)}</span>`;
+      b.onclick=()=>openAtlas(c.id); t.append(b);
+      const o=document.createElement('option'); o.value=c.id; o.innerHTML=(num?num+'. ':'')+maj(c.titre); og.append(o);
     }
-    t.append(row);
   }
+  sel.onchange=()=>openAtlas(sel.value);
   renderAtlasLinks();
 }
 function renderAtlasLinks(){
@@ -1450,7 +1482,8 @@ function renderAtlasLinks(){
 }
 async function openAtlas(id, n){
   setView('atlas'); atlasCourant=id;
-  $('atlas-tabs').querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected', b.dataset.a===id));
+  $('atlas-tabs').querySelectorAll('.aitem').forEach(b=>b.setAttribute('aria-current', b.dataset.a===id));
+  $('atlas-select').value=id;
   try{ history.replaceState(null,'','#atlas-'+id) }catch(e){}
   const body=$('atlas-body');
   const info=ATLAS.find(c=>c.id===id);
