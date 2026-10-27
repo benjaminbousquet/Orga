@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mécanismes animés</title>
+<title>Chimie en PCSI</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,6 +97,54 @@ ul.it li::before{content:"• "}
 .alinks{margin:0;padding:0;list-style:none;display:grid;gap:6px}
 .alinks a{color:var(--accent)}
 .amsg{color:var(--muted)}
+.maintabs{overflow-x:auto;scrollbar-width:thin}
+.mtab{flex:0 0 auto}
+@media (max-width:900px){.mtab-s{display:none}}
+.pane{display:grid;gap:16px}
+/* liste des chapitres (accueil et TD) */
+.chaps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.chap{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:12px 16px;display:grid;
+  grid-template-columns:3.2em minmax(0,1fr);gap:4px 12px;align-items:baseline}
+.chap-n{font:600 1.35rem var(--display);color:var(--accent);font-variant-numeric:tabular-nums;grid-row:span 2}
+.chap-t{font:500 1.06rem var(--display);margin:0;text-wrap:balance}
+.chap-l{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.lk{font:600 13px var(--body);color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:6px;
+  padding:4px 10px;text-decoration:none;cursor:pointer}
+.lk:hover{border-color:var(--accent)}
+.lk.pdf::after{content:" PDF";font-weight:400;opacity:.7;font-size:11px}
+.lk.meca{background:transparent;color:var(--arrow);border-color:var(--arrow);border-radius:999px}
+.lk.off{color:var(--muted);background:transparent;cursor:default;font-weight:400}
+/* générateur de colles */
+.cgrid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.cgrid{grid-template-columns:minmax(0,1fr)}}
+.cform{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;display:grid;gap:12px;min-width:0}
+.cform fieldset{border:0;margin:0;padding:0;min-width:0}
+.cform legend{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.cchaps{display:grid;gap:2px;max-height:340px;overflow-y:auto}
+.cchaps label{display:grid;grid-template-columns:auto 1.8em minmax(0,1fr);gap:6px;align-items:baseline;font-size:14px;padding:3px 4px;
+  border-radius:6px;cursor:pointer}
+.cchaps label:hover{background:var(--accent-soft)}
+.cchaps .cn{color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.copts{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:end}
+.copts label{display:grid;gap:3px;font-size:13px;color:var(--muted)}
+.copts select{font:15px var(--body);padding:5px 6px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink)}
+.copts .ck{display:flex;gap:6px;align-items:center;color:var(--ink);font-size:14px}
+.cbtns{display:flex;gap:8px}
+.btn.primary{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+.cmsg{margin:0;font-size:14px;color:var(--arrow);min-height:1.2em}
+.sujet{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:16px;display:grid;gap:14px}
+.sujet h2{font-family:var(--display);font-weight:500;font-size:1.3rem;margin:0}
+.sujet .meta{color:var(--muted);font-size:.9rem;margin:-8px 0 0}
+.sujet h3{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.sheet .q{margin:.35em 0}
+.sheet .qn{margin-right:.2em}
+@media print{
+  body{background:#fff}
+  .top,.cform,.intro,#colle-print{display:none!important}
+  .cgrid{display:block}
+  .sujet{border:0;padding:0}
+  .sheet{border:0}
+}
 .tabs{display:grid;gap:8px}
 .tabrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .tabgrp{font:600 12px var(--body);letter-spacing:.08em;color:var(--muted);width:3.4em}
@@ -167,14 +215,55 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
 <div class="app">
   <header class="top">
-    <h1>Chimie en PCSI et PC</h1>
+    <h1>Chimie en PCSI</h1>
     <nav class="maintabs" role="tablist" aria-label="Parties du site">
-      <button class="mtab" role="tab" id="vb-meca" aria-selected="true" aria-controls="view-meca">
+      <button class="mtab" role="tab" id="vb-accueil" aria-selected="true" aria-controls="view-accueil">
+        <span class="mtab-t">Chapitres</span><span class="mtab-s">le programme de l'année</span></button>
+      <button class="mtab" role="tab" id="vb-meca" aria-selected="false" aria-controls="view-meca">
         <span class="mtab-t">Mécanismes animés</span><span class="mtab-s">chimie organique, étape par étape</span></button>
       <button class="mtab" role="tab" id="vb-atlas" aria-selected="false" aria-controls="view-atlas">
-        <span class="mtab-t">Atlas d'entraînement</span><span class="mtab-s">exercices et corrigés, tous chapitres</span></button>
+        <span class="mtab-t">Atlas d'entraînement</span><span class="mtab-s">exercices et corrigés</span></button>
+      <button class="mtab" role="tab" id="vb-td" aria-selected="false" aria-controls="view-td">
+        <span class="mtab-t">TD</span><span class="mtab-s">énoncés et corrigés en PDF</span></button>
+      <button class="mtab" role="tab" id="vb-colle" aria-selected="false" aria-controls="view-colle">
+        <span class="mtab-t">Colles</span><span class="mtab-s">générateur de sujets</span></button>
     </nav>
   </header>
+  <section id="view-accueil" class="pane" role="tabpanel" aria-labelledby="vb-accueil">
+    <p class="intro">Les chapitres de chimie de PCSI. Pour chacun : l'atlas d'entraînement corrigé, le TD et son corrigé,
+      les mécanismes animés et les sujets de colle.</p>
+    <ol class="chaps" id="chap-list"></ol>
+  </section>
+  <section id="view-td" class="pane" role="tabpanel" aria-labelledby="vb-td" hidden>
+    <p class="intro">Les feuilles de TD de chaque chapitre et leur corrigé, au format PDF.</p>
+    <ol class="chaps" id="td-list"></ol>
+  </section>
+  <section id="view-colle" class="pane" role="tabpanel" aria-labelledby="vb-colle" hidden>
+    <p class="intro">Choisissez les chapitres de la semaine, puis tirez un sujet au hasard dans la banque de colle.
+      Les sujets sont donnés sans corrigé.</p>
+    <div class="cgrid">
+      <form class="cform" id="colle-form">
+        <fieldset>
+          <legend>Chapitres</legend>
+          <div class="cchaps" id="colle-chaps"><p class="amsg">Chargement de la banque…</p></div>
+        </fieldset>
+        <div class="copts">
+          <label for="colle-n">Exercices
+            <select id="colle-n"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></label>
+          <label for="colle-diff">Difficulté
+            <select id="colle-diff"><option value="0" selected>Variée</option><option value="1">★ facile</option>
+              <option value="2">★★ moyenne</option><option value="3">★★★ difficile</option></select></label>
+          <label class="ck" for="colle-cours"><input type="checkbox" id="colle-cours" checked> Question de cours</label>
+        </div>
+        <div class="cbtns">
+          <button class="btn primary" type="submit" id="colle-go">Tirer un sujet</button>
+          <button class="btn" type="button" id="colle-print" hidden>Imprimer</button>
+        </div>
+        <p class="cmsg" id="colle-msg" role="status"></p>
+      </form>
+      <div id="colle-out" class="abody"></div>
+    </div>
+  </section>
   <section id="view-atlas" class="atlas" role="tabpanel" aria-labelledby="vb-atlas" hidden>
     <div class="agrid">
       <nav class="alist" id="atlas-tabs" aria-label="Chapitres des atlas"></nav>
@@ -183,7 +272,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <div id="atlas-body" class="abody"></div>
     </div>
   </section>
-  <div id="view-meca" class="viewmeca" role="tabpanel" aria-labelledby="vb-meca">
+  <div id="view-meca" class="viewmeca" role="tabpanel" aria-labelledby="vb-meca" hidden>
   <p class="intro">Choisissez un mécanisme, puis avancez avec les flèches ← → ou le bouton Lecture.</p>
   <nav class="tabs" id="tabs" aria-label="Mécanismes"></nav>
   <div class="main">
@@ -435,38 +524,6 @@ const MECHS = {
     bonds:['Om-C','Om-Mm','C-Hc','C-Me','C-O2','O2-M2','O-H1','O-H2'],
     x:[{k:'tx',x:640,y:110,s:'+ H⁺ régénéré',c:'n'}]}
   ]},
- al:{tab:'Aldolisation', name:'Aldolisation en milieu basique', reac:'2 éthanal, HO⁻ catalytique',
-  prof:[[0,.45,'éthanal'],[.17,.75,''],[.33,.6,'énolate'],[.5,.8,''],[.67,.5,'alcoolate'],[.83,.6,''],[1,.35,'aldol']],
-  facts:[['Bilan','<span class="f">2 CH₃CHO → CH₃CH(OH)CH₂CHO</span>'],
-    ['Condition','Il faut un H sur le carbone α du carbonyle (pKa ≈ 17). HO⁻ est régénéré : catalyse basique.'],
-    ['Crotonisation','Par chauffage, l\'aldol se déshydrate en aldéhyde α,β-insaturé conjugué (but-2-énal).'],
-    ['Aldolisation croisée','Pour éviter un mélange, un seul partenaire doit être énolisable (ex. benzaldéhyde comme électrophile).']],
-  steps:[
-   {name:'Énolisation', p:0,
-    text:"L'hydrogène porté par le carbone voisin du groupe carbonyle (carbone α) est acide. HO⁻ l'arrache : le doublet de la liaison C–H forme une double liaison C=C et le doublet π de C=O passe sur l'oxygène.",
-    a:{O:{x:240,y:130,l:'HO',lp:[90,-90,0],ch:'−',chA:130}, Cx:{x:335,y:205,l:'CH₂'}, Hx:{x:335,y:130,l:'H'},
-       Cc:{x:405,y:165,l:'C'}, Hc:{x:405,y:95,l:'H'}, Oc:{x:475,y:205,l:'O',lp:[20,-80]}},
-    bonds:['Cx-Hx','Cx-Cc','Cc=Oc','Cc-Hc'],
-    arrows:[{f:['lp','O',0],t:['at','Hx',180],b:16},{f:['bd','Cx','Hx'],t:['bd','Cx','Cc',.5,7],b:12},
-            {f:['bd','Cc','Oc',.5,5],t:['at','Oc',80],b:12}]},
-   {name:'Énolate', p:.33,
-    text:"L'ion énolate est nucléophile par son carbone α. En reformant la liaison C=O, il attaque le carbone électrophile d'une deuxième molécule d'éthanal.",
-    a:{O:{x:170,y:58,l:'HO',lp:[90,-90]}, Hx:{x:230,y:58,l:'H'}, Oc:{x:475,y:205,l:'O',lp:[80,-20,-110],ch:'−',chA:25},
-       Cb:{x:250,y:200,l:'C'}, Ob:{x:250,y:125,l:'O',lp:[60,120]}, Hb:{x:210,y:255,l:'H'}, Mb:{x:175,y:200,l:'H₃C'}},
-    bonds:['O-Hx','Cx=Cc','Cc-Oc','Cc-Hc','Cb=Ob','Cb-Hb','Cb-Mb'],
-    arrows:[{f:['lp','Oc',80],t:['bd','Cc','Oc',.5,7],b:-12},{f:['bd','Cx','Cc',.5,-5],t:['at','Cb',0],b:-40},
-            {f:['bd','Cb','Ob',.5,5],t:['at','Ob',180],b:12}]},
-   {name:'Alcoolate', p:.67,
-    text:"Une liaison C–C est créée et on obtient un ion alcoolate. Base forte, il capte un proton de l'eau formée à la première étape.",
-    a:{Cb:{x:260,y:200,l:'C'}, Ob:{x:260,y:125,l:'O',lp:[150,90,10],ch:'−',chA:50}, Hb:{x:220,y:255,l:'H'}, Mb:{x:185,y:200,l:'H₃C'},
-       Cx:{x:335,y:200,l:'CH₂'}, Cc:{x:405,y:160,l:'C'}, Hc:{x:405,y:90,l:'H'}, Oc:{x:470,y:200,l:'O',lp:[20,-80]}},
-    bonds:['O-Hx','Cb-Ob','Cb-Hb','Cb-Mb','Cb-Cx','Cx-Cc','Cc=Oc','Cc-Hc'],
-    arrows:[{f:['lp','Ob',150],t:['at','Hx',-60],b:10},{f:['bd','O','Hx',.5],t:['at','O',-80],b:14}]},
-   {name:'Aldol', p:1,
-    text:"On obtient le 3-hydroxybutanal (un aldol) et l'ion hydroxyde est régénéré : HO⁻ est un catalyseur. Par chauffage, l'aldol se déshydrate en but-2-énal (crotonisation).",
-    a:{Ob:{x:260,y:125,l:'O',lp:[180,0]}, Hx:{x:260,y:55,l:'H'}, O:{x:182,y:85,l:'HO',lp:[90,-90,0],ch:'−',chA:130}},
-    bonds:['Ob-Hx','Cb-Ob','Cb-Hb','Cb-Mb','Cb-Cx','Cx-Cc','Cc=Oc','Cc-Hc']}
-  ]},
  co2:{tab:'RMgX + CO₂', name:'Carboxylation d\'un organomagnésien', reac:'CH₃MgBr + CO₂, puis hydrolyse acide',
   prof:[[0,.6,'RMgBr + CO₂'],[.28,.82,'ET'],[.55,.28,'RCOO⁻'],[.75,.36,''],[1,.15,'RCOOH']],
   facts:[['Bilan','<span class="f">RMgBr + CO₂ → RCOO⁻ MgBr⁺</span>, puis RCOOH après hydrolyse acide.'],
@@ -563,404 +620,6 @@ const MECHS = {
     text:"On obtient le propan-2-ol, un alcool secondaire. Un aldéhyde donnerait un alcool primaire.",
     a:{O:{x:498,y:190,l:'O',lp:[-90,0]}, Hs:{x:498,y:118,l:'H'}, Os:{x:600,y:70,l:'CH₃O',lp:[0,50,-50],ch:'−',chA:110}},
     bonds:['Ht-C','C-O','C-Ra','C-Rb','O-Hs']}
-  ]},
- da:{tab:'Diels-Alder', name:'Réaction de Diels-Alder', reac:'buta-1,3-diène + (Z)-butènedioate de diméthyle',
-  prof:[[0,.55,'diène + diénophile'],[.5,.9,'ET'],[1,.15,'cyclohexène']],
-  facts:[['Type','Cycloaddition [4+2], concertée, en une seule étape.'],
-    ['Orbitales','Interaction principale HO du diène / BV du diénophile : un groupe attracteur sur le diénophile accélère la réaction.'],
-    ['Stéréochimie','Addition suprafaciale, stéréospécifique (cis reste cis). Règle endo : produit endo majoritaire sous contrôle cinétique.'],
-    ['Rétro-Diels-Alder','La réaction inverse est favorisée à haute température (effet entropique).']],
-  steps:[
-   {name:'Réactifs', p:0,
-    text:"Le buta-1,3-diène, en conformation s-cis, et le diénophile s'approchent dans deux plans parallèles. Les trois doublets π se déplacent en même temps, de façon cyclique.",
-    a:{C1:{x:330,y:110,l:''}, C2:{x:270,y:145,l:''}, C3:{x:270,y:225,l:''}, C4:{x:330,y:260,l:''},
-       C5:{x:440,y:145,l:''}, C6:{x:440,y:225,l:''}, E1:{x:525,y:110,l:'CO₂CH₃'}, E2:{x:525,y:260,l:'CO₂CH₃'}},
-    bonds:['C1=C2','C2-C3','C3=C4','C5=C6','C5-E1','C6-E2'],
-    arrows:[{f:['bd','C1','C2'],t:['bd','C1','C5',.55],b:25},{f:['bd','C5','C6',.5,-6],t:['bd','C6','C4',.5],b:15},
-            {f:['bd','C3','C4'],t:['bd','C2','C3',.5,-6],b:14}]},
-   {name:'État de transition', p:.5,
-    text:"Les deux liaisons σ se forment en même temps : l'état de transition est cyclique, à six électrons.",
-    a:{C5:{x:410,y:145,l:''}, C6:{x:410,y:225,l:''}, E1:{x:495,y:110,l:'CO₂CH₃'}, E2:{x:495,y:260,l:'CO₂CH₃'}},
-    bonds:['C1%C2','C2%C3','C3%C4','C5%C6','C1~C5','C4~C6','C5-E1','C6-E2'],
-    x:[{k:'br',x1:235,y1:80,x2:595,y2:295,m:'‡'}]},
-   {name:'Cyclohexène', p:1,
-    text:"On obtient un cyclohexène. Les deux groupes ester, du même côté de la double liaison dans le réactif (Z), sont du même côté du cycle (cis) : la réaction est stéréospécifique.",
-    a:{C1:{x:355,y:120,l:''}, C2:{x:294,y:155,l:''}, C3:{x:294,y:225,l:''}, C4:{x:355,y:260,l:''},
-       C6:{x:416,y:225,l:''}, C5:{x:416,y:155,l:''}, E1:{x:505,y:115,l:'CO₂CH₃'}, E2:{x:505,y:265,l:'CO₂CH₃'}},
-    bonds:['C1-C2','C2=C3','C3-C4','C4-C6','C6-C5','C5-C1','C5>E1','C6>E2']}
-  ]},
- hyd:{tab:'Hydratation', name:'Hydratation d\'un alcène en milieu acide', reac:'2-méthylpropène + H₂O, catalyse acide',
-  prof:[[0,.45,'alcène'],[.2,.9,'ET₁'],[.38,.62,'C⁺'],[.5,.7,''],[.65,.36,'ROH₂⁺'],[.8,.42,''],[1,.2,'alcool']],
-  facts:[['Régiosélectivité','Règle de Markovnikov : H se fixe sur le carbone le moins substitué, via le carbocation le plus stable.'],
-    ['Catalyse','Acide (H₂SO₄ dilué, H₃PO₄) : H₃O⁺ est régénéré.'],
-    ['Stéréochimie','Carbocation plan : attaque sur les deux faces, non stéréosélective. Réarrangements possibles du carbocation.'],
-    ['Équilibre','Réaction renversable : à chaud, en milieu acide concentré, la déshydratation (E1) l\'emporte.']],
-  steps:[
-   {name:'Protonation', p:0,
-    text:"La double liaison C=C, riche en électrons, capte un proton de H₃O⁺. Le proton se fixe sur le carbone le moins substitué : on forme le carbocation le plus stable (tertiaire).",
-    a:{C1:{x:330,y:190,l:'H₂C'}, C2:{x:410,y:190,l:'C'}, Me1:{x:450,y:125,l:'CH₃'}, Me2:{x:450,y:255,l:'CH₃'},
-       Hh:{x:320,y:118,l:'H'}, Ow:{x:250,y:85,l:'O',lp:[180],ch:'+',chA:90}, Hw1:{x:200,y:58,l:'H'}, Hw2:{x:210,y:130,l:'H'}},
-    bonds:['C1=C2','C2-Me1','C2-Me2','Ow-Hh','Ow-Hw1','Ow-Hw2'],
-    arrows:[{f:['bd','C1','C2',.5,5],t:['at','Hh',-60],b:-12},{f:['bd','Ow','Hh'],t:['at','Ow',-30],b:-14}]},
-   {name:'Carbocation', p:.38,
-    text:"Le carbocation tertiaire est plan. Une molécule d'eau, nucléophile, l'attaque indifféremment sur l'une ou l'autre face.",
-    a:{C1:{x:330,y:190,l:'H₂C'}, Hh:{x:330,y:118,l:'H'}, C2:{x:410,y:190,l:'C',ch:'+',chA:120},
-       Ow:{x:540,y:190,l:'O',lp:[180,-90]}, Hw1:{x:590,y:140,l:'H'}, Hw2:{x:590,y:240,l:'H'}},
-    bonds:['C1-C2','C1-Hh','C2-Me1','C2-Me2','Ow-Hw1','Ow-Hw2'],
-    arrows:[{f:['lp','Ow',180],t:['at','C2',0],b:-14}]},
-   {name:'Ion oxonium', p:.65,
-    text:"L'ion oxonium formé est déprotoné par une autre molécule d'eau. Le catalyseur H₃O⁺ est régénéré.",
-    a:{C2:{x:410,y:190,l:'C'}, Me1:{x:410,y:115,l:'CH₃'}, Me2:{x:410,y:266,l:'CH₃'},
-       Ow:{x:490,y:190,l:'O',lp:[-120],ch:'+',chA:0}, Hw1:{x:530,y:130,l:'H'}, Hw2:{x:530,y:250,l:'H'}, W2:{x:630,y:90,l:'OH₂',lp:[180,-130]}},
-    bonds:['C1-C2','C1-Hh','C2-Me1','C2-Me2','C2-Ow','Ow-Hw1','Ow-Hw2'],
-    arrows:[{f:['lp','W2',180],t:['at','Hw1',30],b:14},{f:['bd','Ow','Hw1'],t:['at','Ow',95],b:-12}]},
-   {name:'Alcool', p:1,
-    text:"On obtient le 2-méthylpropan-2-ol. Bilan : addition de H et de OH sur la double liaison, OH sur le carbone le plus substitué (règle de Markovnikov).",
-    a:{Ow:{x:490,y:190,l:'O',lp:[80,0]}, W2:{x:630,y:90,l:'OH₂',lp:[-130],ch:'+',chA:90}, Hw1:{x:575,y:115,l:'H'}},
-    bonds:['C1-C2','C1-Hh','C2-Me1','C2-Me2','C2-Ow','Ow-Hw2','W2-Hw1']}
-  ]},
- hb:{tab:'Hydroboration', name:'Hydroboration d\'un alcène', reac:'propène + BH₃ (THF), puis H₂O₂, HO⁻',
-  prof:[[0,.5,'alcène + BH₃'],[.5,.85,'ET'],[1,.2,'alkylborane']],
-  facts:[['Régiosélectivité','Anti-Markovnikov : B se fixe sur le carbone le moins encombré (effets stériques et électroniques).'],
-    ['Stéréochimie','Addition syn, concertée : stéréospécifique.'],
-    ['En pratique','BH₃ en solution dans le THF ; chaque liaison B–H peut réagir (trialkylborane).'],
-    ['Hydrolyse oxydante','H₂O₂ / HO⁻ : C–B devient C–OH avec rétention. Bilan : hydratation anti-Markovnikov.']],
-  steps:[
-   {name:'Réactifs', p:0,
-    text:"Le bore du borane possède une lacune électronique : c'est un électrophile. La double liaison C=C l'attaque pendant qu'un hydrogène passe du bore au carbone voisin.",
-    a:{C1:{x:330,y:200,l:'H₂C'}, C2:{x:410,y:200,l:'CH'}, Me:{x:455,y:265,l:'CH₃'}, B:{x:330,y:110,l:'BH₂'}, Hb:{x:410,y:110,l:'H'}},
-    bonds:['C1=C2','C2-Me','B-Hb'],
-    arrows:[{f:['bd','C1','C2',.5,5],t:['at','B',-90],b:12},{f:['bd','B','Hb'],t:['at','C2',90],b:12}]},
-   {name:'État de transition', p:.5,
-    text:"État de transition à quatre centres : les liaisons C–B et C–H se forment du même côté de la double liaison. L'addition est syn.",
-    a:{B:{x:330,y:128,l:'BH₂'}, Hb:{x:410,y:128,l:'H'}},
-    bonds:['C1%C2','C2-Me','B~Hb','C1~B','C2~Hb'],
-    x:[{k:'br',x1:270,y1:90,x2:510,y2:300,m:'‡'}]},
-   {name:'Alkylborane', p:1,
-    text:"Le bore se fixe sur le carbone le moins substitué (anti-Markovnikov). L'hydrolyse oxydante (H₂O₂, HO⁻) remplace ensuite B par OH avec rétention de configuration : on obtient le propan-1-ol.",
-    a:{B:{x:330,y:128,l:'BH₂'}, Hb:{x:410,y:128,l:'H'}},
-    bonds:['C1-C2','C2-Me','C1-B','C2-Hb']}
-  ]},
- gep:{tab:'RMgX + époxyde', name:'Ouverture d\'un époxyde par un organomagnésien', reac:'CH₃MgBr + oxirane, puis hydrolyse acide',
-  prof:[[0,.6,'RMgX + époxyde'],[.25,.85,'ET'],[.5,.22,'alcoolate'],[.72,.32,''],[1,.1,'alcool']],
-  facts:[['Mécanisme','SN2 : attaque sur le carbone le moins encombré de l\'époxyde.'],
-    ['Stéréochimie','Inversion de configuration du carbone attaqué : ouverture anti.'],
-    ['Intérêt','Allonge la chaîne de deux atomes de carbone et donne un alcool (primaire avec l\'oxirane).'],
-    ['Force motrice','La tension du cycle à trois atomes rend l\'époxyde électrophile, contrairement aux étheroxydes usuels.']],
-  steps:[
-   {name:'Attaque', p:0,
-    text:"Le carbone nucléophile de l'organomagnésien attaque un carbone de l'époxyde, du côté opposé à l'oxygène (SN2). La liaison C–O se rompt et la tension du cycle est libérée.",
-    a:{Mg:{x:190,y:190,l:'BrMg'}, Cn:{x:270,y:190,l:'H₃C'}, Ca:{x:400,y:190,l:'CH₂'}, Cb:{x:445,y:128,l:'CH₂'}, O:{x:480,y:190,l:'O',lp:[0,-90]}},
-    bonds:['Mg-Cn','Ca-Cb','Cb-O','Ca-O'],
-    arrows:[{f:['bd','Mg','Cn'],t:['at','Ca',180],b:55},{f:['bd','Ca','O',.5],t:['at','O',-130],b:-14}]},
-   {name:'Alcoolate', p:.5,
-    text:"On obtient un alcoolate dont la chaîne a gagné deux atomes de carbone. L'hydrolyse acide le protone.",
-    a:{Cn:{x:290,y:200,l:'H₃C'}, Ca:{x:365,y:160,l:'CH₂'}, Cb:{x:440,y:200,l:'CH₂'}, O:{x:510,y:160,l:'O',lp:[90,-10,-110],ch:'−',chA:40},
-       Mg:{x:610,y:200,l:'MgBr',ch:'+',chA:60}, Hh:{x:510,y:90,l:'H'}, Ow:{x:510,y:36,l:'OH₂',lp:[165],ch:'+',chA:-20}},
-    bonds:['Cn-Ca','Ca-Cb','Cb-O','Hh-Ow'],
-    arrows:[{f:['lp','O',90],t:['at','Hh',-90],b:18},{f:['bd','Hh','Ow'],t:['at','Ow',-150],b:14}]},
-   {name:'Alcool', p:1,
-    text:"On obtient le propan-1-ol : l'ouverture d'un époxyde par un organomagnésien allonge la chaîne de deux atomes de carbone.",
-    a:{O:{x:510,y:160,l:'O',lp:[0,-90]}, Hh:{x:510,y:90,l:'H'}, Ow:{x:600,y:60,l:'H₂O',lp:[90,-90]}},
-    bonds:['Cn-Ca','Ca-Cb','Cb-O','O-Hh']}
-  ]},
- ges:{tab:'RMgX + ester', name:'Action d\'un organomagnésien sur un ester', reac:'éthanoate de méthyle + 2 CH₃MgBr, puis hydrolyse acide',
-  prof:[[0,.6,'ester'],[.12,.8,''],[.25,.45,''],[.37,.55,''],[.5,.4,'cétone'],[.62,.62,''],[.75,.15,'alcoolate'],[.87,.22,''],[1,.05,'alcool']],
-  facts:[['Bilan','<span class="f">RCOOR′ + 2 R″MgX → RR″₂C–OH</span> (après hydrolyse) + R′OH'],
-    ['Deux équivalents','La cétone intermédiaire, plus électrophile que l\'ester, consomme aussitôt un deuxième équivalent.'],
-    ['Produit','Alcool tertiaire portant deux groupes R″ identiques (alcool secondaire à partir d\'un méthanoate).'],
-    ['Mécanisme','Addition nucléophile – élimination, puis addition nucléophile.']],
-  steps:[
-   {name:'Première addition', p:0,
-    text:"L'organomagnésien attaque le carbone électrophile de l'ester. Le doublet π de C=O bascule sur l'oxygène.",
-    a:{Mg:{x:190,y:190,l:'BrMg'}, Cn:{x:270,y:190,l:'H₃C'}, C:{x:400,y:190,l:'C'}, O:{x:400,y:115,l:'O',lp:[150,90]},
-       R:{x:360,y:252,l:'H₃C'}, Om:{x:485,y:215,l:'OCH₃'}},
-    bonds:['Mg-Cn','C=O','C-R','C-Om'],
-    arrows:[{f:['bd','Mg','Cn'],t:['at','C',180],b:55},{f:['bd','C','O',.5,-5],t:['at','O',0],b:-10}]},
-   {name:'Élimination', p:.25,
-    text:"L'intermédiaire tétraédrique n'est pas stable : le doublet de l'oxygène reforme la double liaison C=O et l'ion méthanolate part.",
-    a:{Mg:{x:600,y:100,l:'MgBr',ch:'+',chA:90}, Cn:{x:325,y:190,l:'H₃C'}, O:{x:400,y:115,l:'O',lp:[90,20,160],ch:'−',chA:-150},
-       R:{x:400,y:266,l:'CH₃'}, Om:{x:485,y:205,l:'OCH₃'}},
-    bonds:['Cn-C','C-O','C-R','C-Om'],
-    arrows:[{f:['lp','O',20],t:['bd','C','O',.5,-6],b:14},{f:['bd','C','Om',.5],t:['at','Om',-120],b:-14}]},
-   {name:'Cétone', p:.5,
-    text:"On obtient la propanone, plus électrophile que l'ester de départ. Elle réagit aussitôt avec une deuxième molécule d'organomagnésien : on ne peut pas s'arrêter à la cétone.",
-    a:{Cn:{x:440,y:252,l:'CH₃'}, R:{x:360,y:252,l:'H₃C'}, O:{x:400,y:115,l:'O',lp:[150,90]}, Om:{x:640,y:280,l:'CH₃OMgBr'}, Mg:null,
-       Mg2:{x:190,y:190,l:'BrMg'}, Cn2:{x:270,y:190,l:'H₃C'}},
-    bonds:['Mg2-Cn2','C=O','C-R','C-Cn'],
-    arrows:[{f:['bd','Mg2','Cn2'],t:['at','C',180],b:55},{f:['bd','C','O',.5,-5],t:['at','O',0],b:-10}]},
-   {name:'Alcoolate', p:.75,
-    text:"On obtient un alcoolate tertiaire. L'hydrolyse acide le protone.",
-    a:{Cn2:{x:325,y:190,l:'H₃C'}, O:{x:400,y:115,l:'O',lp:[90,160,20],ch:'−',chA:-150}, R:{x:400,y:266,l:'CH₃'}, Cn:{x:475,y:190,l:'CH₃'},
-       Mg2:{x:580,y:110,l:'MgBr',ch:'+',chA:90}, Hp:{x:490,y:60,l:'H',ch:'+',chA:45}},
-    bonds:['Cn2-C','C-O','C-R','C-Cn'],
-    arrows:[{f:['lp','O',20],t:['at','Hp',-150],b:-12}]},
-   {name:'Alcool tertiaire', p:1,
-    text:"On obtient le 2-méthylpropan-2-ol : deux des groupes du carbone fonctionnel proviennent de l'organomagnésien.",
-    a:{O:{x:400,y:115,l:'O',lp:[90,160]}, Hp:{x:465,y:85,l:'H'}},
-    bonds:['Cn2-C','C-O','C-R','C-Cn','O-Hp']}
-  ]},
- alk:{tab:'C-alkylation', name:'C-alkylation d\'un énolate', reac:'propanone + LDA, puis CH₃I',
-  prof:[[0,.5,'cétone + LDA'],[.22,.7,''],[.45,.3,'énolate'],[.72,.75,'ET'],[1,.15,'cétone alkylée']],
-  facts:[['Base','LDA (diisopropylamidure de lithium) : base forte, encombrée, peu nucléophile ; THF, −78 °C.'],
-    ['Énolate cinétique','Avec le LDA à basse température, on arrache le H le plus accessible : énolate le moins substitué.'],
-    ['Alkylation','SN2 sur un dérivé halogéné primaire ou méthylique. L\'énolate est un nucléophile ambident : la C-alkylation l\'emporte.'],
-    ['Énolate thermodynamique','Base plus faible, température plus haute, équilibre : énolate le plus substitué.']],
-  steps:[
-   {name:'Formation de l\'énolate', p:0,
-    text:"Le LDA, base forte et encombrée, arrache un hydrogène en α du groupe carbonyle. À −78 °C, la déprotonation est totale et rapide.",
-    a:{N:{x:225,y:130,l:'iPr₂N',lp:[0,-90],ch:'−',chA:90}, Cx:{x:335,y:205,l:'CH₂'}, Hx:{x:335,y:130,l:'H'},
-       Cc:{x:405,y:165,l:'C'}, Me:{x:405,y:95,l:'CH₃'}, Oc:{x:475,y:205,l:'O',lp:[20,-80]}},
-    bonds:['Cx-Hx','Cx-Cc','Cc=Oc','Cc-Me'],
-    arrows:[{f:['lp','N',0],t:['at','Hx',180],b:16},{f:['bd','Cx','Hx'],t:['bd','Cx','Cc',.5,7],b:12},
-            {f:['bd','Cc','Oc',.5,5],t:['at','Oc',80],b:12}]},
-   {name:'C-alkylation', p:.45,
-    text:"L'énolate, nucléophile par son carbone α, attaque l'iodométhane selon une SN2. Le doublet de l'oxygène reforme la liaison C=O.",
-    a:{N:{x:180,y:58,l:'iPr₂N',lp:[-55]}, Hx:{x:240,y:58,l:'H'}, Oc:{x:475,y:205,l:'O',lp:[80,-20,-110],ch:'−',chA:25},
-       Li:{x:570,y:240,l:'Li',ch:'+',chA:45}, Cm:{x:250,y:220,l:'CH₃'}, I:{x:170,y:220,l:'I',lp:[90,180,-90]}},
-    bonds:['N-Hx','Cx=Cc','Cc-Oc','Cc-Me','Cm-I'],
-    arrows:[{f:['lp','Oc',80],t:['bd','Cc','Oc',.5,7],b:-12},{f:['bd','Cx','Cc',.5,-5],t:['at','Cm',-10],b:58},
-            {f:['bd','Cm','I',.5],t:['at','I',-110],b:12}]},
-   {name:'Butanone', p:1,
-    text:"On obtient la butanone : une liaison C–C a été créée en α du groupe carbonyle.",
-    a:{Cm:{x:280,y:250,l:'CH₃'}, Cx:{x:335,y:200,l:'CH₂'}, Cc:{x:405,y:160,l:'C'}, Me:{x:405,y:90,l:'CH₃'}, Oc:{x:470,y:200,l:'O',lp:[20,-80]},
-       I:{x:180,y:300,l:'I',lp:[90,180,-90,0],ch:'−',chA:45}},
-    bonds:['N-Hx','Cm-Cx','Cx-Cc','Cc=Oc','Cc-Me']}
-  ]},
- cro:{tab:'Crotonisation', name:'Crotonisation (E1cb)', reac:'3-hydroxybutanal, HO⁻, chauffage',
-  prof:[[0,.4,'aldol'],[.25,.7,''],[.5,.55,'énolate'],[.75,.8,''],[1,.25,'énal']],
-  facts:[['Mécanisme','E1cb : déprotonation en α, puis départ de HO⁻ depuis l\'énolate.'],
-    ['Conditions','Chauffage en milieu basique (ou acide, via l\'énol).'],
-    ['Force motrice','Conjugaison de C=C avec C=O : l\'aldéhyde α,β-insaturé est plus stable.'],
-    ['Stéréochimie','On obtient majoritairement l\'alcène E, le plus stable.']],
-  steps:[
-   {name:'Déprotonation', p:0,
-    text:"En milieu basique et à chaud, HO⁻ arrache un hydrogène en α du groupe carbonyle de l'aldol : il se forme un énolate.",
-    a:{Ob:{x:260,y:125,l:'OH',lp:[180,0]}, Cb:{x:260,y:200,l:'C'}, Mb:{x:185,y:200,l:'H₃C'}, Hb:{x:220,y:255,l:'H'},
-       Cx:{x:335,y:200,l:'CH'}, Hx:{x:335,y:275,l:'H'}, Cc:{x:405,y:160,l:'C'}, Hc:{x:405,y:90,l:'H'}, Oc:{x:470,y:200,l:'O',lp:[20,-80]},
-       Bo:{x:450,y:300,l:'HO',lp:[90,-90,180],ch:'−',chA:45}},
-    bonds:['Cb-Ob','Cb-Mb','Cb-Hb','Cb-Cx','Cx-Hx','Cx-Cc','Cc=Oc','Cc-Hc'],
-    arrows:[{f:['lp','Bo',180],t:['at','Hx',0],b:-12},{f:['bd','Cx','Hx'],t:['bd','Cx','Cc',.5,-7],b:-12},
-            {f:['bd','Cc','Oc',.5,5],t:['at','Oc',80],b:12}]},
-   {name:'Départ de HO⁻', p:.5,
-    text:"Le doublet de l'oxygène reforme C=O et la double liaison C=C se forme en chassant l'ion hydroxyde porté par le carbone β : c'est une élimination E1cb (par la base conjuguée).",
-    a:{Oc:{x:475,y:205,l:'O',lp:[80,-20,-110],ch:'−',chA:25}, Hx:{x:510,y:300,l:'H'}, Bo:{x:455,y:300,l:'HO',lp:[90,-90]}},
-    bonds:['Cb-Ob','Cb-Mb','Cb-Hb','Cb-Cx','Cx=Cc','Cc-Oc','Cc-Hc','Bo-Hx'],
-    arrows:[{f:['lp','Oc',80],t:['bd','Cc','Oc',.5,7],b:-12},{f:['bd','Cx','Cc',.5,5],t:['bd','Cb','Cx',.5,6],b:-18},
-            {f:['bd','Cb','Ob',.5],t:['at','Ob',180],b:12}]},
-   {name:'But-2-énal', p:1,
-    text:"On obtient le (E)-but-2-énal : la double liaison C=C est conjuguée avec C=O, ce qui rend la déshydratation favorable. HO⁻ est régénéré.",
-    a:{Mb:{x:222,y:258,l:'H₃C'}, Hb:{x:222,y:142,l:'H'}, Oc:{x:470,y:200,l:'O',lp:[20,-80]}, Ob:{x:185,y:70,l:'HO',lp:[90,-90,0],ch:'−',chA:130}},
-    bonds:['Cb-Mb','Cb-Hb','Cb=Cx','Cx-Cc','Cc=Oc','Cc-Hc','Bo-Hx']}
-  ]},
- mic:{tab:'Michael', name:'Addition de Michael', reac:'malonate de diéthyle + EtO⁻, puis but-3-én-2-one',
-  prof:[[0,.45,'réactifs'],[.25,.75,'ET'],[.5,.35,'énolate'],[.75,.5,''],[1,.15,'adduit']],
-  facts:[['Régiosélectivité','Addition 1,4 (conjuguée) sur le carbone β, électrophile par conjugaison avec C=O.'],
-    ['Nucléophiles','Nucléophiles « mous » (énolates stabilisés, malonates, cuprates) : addition 1,4. Organomagnésiens et hydrures : plutôt addition 1,2.'],
-    ['Produit','Composé 1,5-dicarbonylé.'],
-    ['Suite classique','Michael puis aldolisation intramoléculaire et crotonisation : annélation de Robinson.']],
-  steps:[
-   {name:'Addition 1,4', p:0,
-    text:"L'énolate du malonate de diéthyle, nucléophile stabilisé, attaque le carbone β de la but-3-én-2-one. Les doublets π se déplacent jusqu'à l'oxygène.",
-    a:{Nc:{x:270,y:110,l:'CH',lp:[-60],ch:'−',chA:90}, E1:{x:185,y:80,l:'EtO₂C'}, E2:{x:355,y:80,l:'CO₂Et'},
-       C4:{x:330,y:200,l:'H₂C'}, C3:{x:400,y:160,l:'CH'}, C2:{x:470,y:200,l:'C'}, O:{x:470,y:275,l:'O',lp:[-30,-150]}, Me:{x:540,y:160,l:'CH₃'}},
-    bonds:['Nc-E1','Nc-E2','C4=C3','C3-C2','C2=O','C2-Me'],
-    arrows:[{f:['lp','Nc',-60],t:['at','C4',120],b:12},{f:['bd','C4','C3',.5,-5],t:['bd','C3','C2',.5,-6],b:-10},
-            {f:['bd','C2','O',.5,5],t:['at','O',30],b:10}]},
-   {name:'Protonation', p:.5,
-    text:"On obtient un énolate. Le solvant (éthanol) le protone sur le carbone α : la double liaison C=O se reforme.",
-    a:{Nc:{x:265,y:125,l:'CH'}, E1:{x:185,y:95,l:'EtO₂C'}, E2:{x:320,y:68,l:'CO₂Et'},
-       O:{x:470,y:275,l:'O',lp:[0,-90,180],ch:'−',chA:-45}, Hs:{x:420,y:90,l:'H'}, Os:{x:490,y:60,l:'OEt',lp:[180,130]}},
-    bonds:['Nc-E1','Nc-E2','Nc-C4','C4-C3','C3=C2','C2-O','C2-Me','Hs-Os'],
-    arrows:[{f:['lp','O',0],t:['bd','C2','O',.5,7],b:-12},{f:['bd','C3','C2',.5,6],t:['at','Hs',-90],b:-10},
-            {f:['bd','Hs','Os'],t:['at','Os',-120],b:-12}]},
-   {name:'Adduit de Michael', p:1,
-    text:"On obtient un composé 1,5-dicarbonylé : une liaison C–C a été créée sur le carbone β. L'ion éthanolate est régénéré.",
-    a:{Hs:{x:400,y:95,l:'H'}, O:{x:470,y:275,l:'O',lp:[-30,-150]}, Os:{x:600,y:90,l:'EtO',lp:[0,50,-50],ch:'−',chA:110}},
-    bonds:['Nc-E1','Nc-E2','Nc-C4','C4-C3','C3-C2','C3-Hs','C2=O','C2-Me']}
-  ]},
- fis:{tab:'Estérification', name:'Estérification de Fischer', reac:'acide éthanoïque + méthanol, catalyse acide',
-  prof:[[0,.5,'acide'],[.1,.62,''],[.2,.56,''],[.3,.78,''],[.4,.5,''],[.5,.62,''],[.6,.58,''],[.7,.82,''],[.8,.56,''],[.9,.64,''],[1,.48,'ester']],
-  facts:[['Bilan','<span class="f">RCOOH + R′OH ⇌ RCOOR′ + H₂O</span>, K ≈ 4 pour un alcool primaire.'],
-    ['Catalyse','Acide (H₂SO₄, APTS) : accélère sans déplacer l\'équilibre.'],
-    ['Déplacement','Excès d\'un réactif ou élimination de l\'eau (Dean-Stark).'],
-    ['Mécanisme','Addition nucléophile – élimination avec activation électrophile du carbonyle. L\'hydrolyse acide de l\'ester est le chemin inverse.']],
-  steps:[
-   {name:'Activation', p:0,
-    text:"Le catalyseur acide protone l'oxygène du groupe carbonyle de l'acide éthanoïque, ce qui rend le carbone plus électrophile.",
-    a:{C:{x:400,y:190,l:'C'}, O1:{x:400,y:115,l:'O',lp:[150,30]}, O2:{x:478,y:205,l:'O',lp:[-40,-130]}, H2:{x:530,y:150,l:'H'},
-       R:{x:360,y:252,l:'H₃C'}, H1:{x:470,y:60,l:'H',ch:'+',chA:45}, Om:{x:290,y:190,l:'O',lp:[0,-90]}, Hm:{x:290,y:118,l:'H'}, Mm:{x:215,y:190,l:'H₃C'}},
-    bonds:['C=O1','C-O2','O2-H2','C-R','Om-Hm','Om-Mm'],
-    arrows:[{f:['lp','O1',30],t:['at','H1',-150],b:-12}]},
-   {name:'Addition', p:.2,
-    text:"Un doublet de l'oxygène du méthanol attaque le carbone. Le doublet π de C=O revient sur l'oxygène.",
-    a:{O1:{x:400,y:115,l:'O',lp:[150],ch:'+',chA:-150}, H1:{x:450,y:70,l:'H'}},
-    bonds:['C=O1','O1-H1','C-O2','O2-H2','C-R','Om-Hm','Om-Mm'],
-    arrows:[{f:['lp','Om',0],t:['at','C',180],b:10},{f:['bd','C','O1',.5,-5],t:['at','O1',-20],b:-10}]},
-   {name:'Transfert de proton', p:.4,
-    text:"Un proton passe de l'oxygène du méthanol à un groupe OH, par l'intermédiaire du solvant. Ce groupe OH devient OH₂⁺, un bon groupe partant.",
-    a:{C:{x:400,y:190,l:'C'}, O1:{x:400,y:115,l:'O',lp:[160,0]}, H1:{x:450,y:70,l:'H'}, O2:{x:478,y:190,l:'O',lp:[-40,-130]}, H2:{x:530,y:140,l:'H'},
-       R:{x:400,y:266,l:'CH₃'}, Om:{x:322,y:190,l:'O',lp:[-90],ch:'+',chA:135}, Hm:{x:322,y:118,l:'H'}, Mm:{x:245,y:190,l:'H₃C'},
-       H3:{x:560,y:262,l:'H',ch:'+',chA:-45}},
-    bonds:['C-O1','O1-H1','C-O2','O2-H2','C-R','Om-C','Om-Hm','Om-Mm'],
-    arrows:[{f:['bd','Om','Hm',.5],t:['at','Om',30],b:10},{f:['lp','O2',-40],t:['at','H3',135],b:14}]},
-   {name:'Départ de l\'eau', p:.6,
-    text:"L'eau part ; un doublet de l'oxygène du groupe OH voisin reforme la double liaison C=O⁺.",
-    a:{Om:{x:322,y:190,l:'O',lp:[90,-90]}, Hm:null, O2:{x:478,y:190,l:'O',lp:[100],ch:'+',chA:0}, H3:{x:530,y:240,l:'H'}},
-    bonds:['C-O1','O1-H1','C-O2','O2-H2','O2-H3','C-R','Om-C','Om-Mm'],
-    arrows:[{f:['lp','O1',160],t:['bd','C','O1',.5,5],b:-14},{f:['bd','C','O2',.5],t:['at','O2',-120],b:-14}]},
-   {name:'Déprotonation', p:.8,
-    text:"L'ester protoné perd son proton : le catalyseur H⁺ est régénéré.",
-    a:{C:{x:400,y:190,l:'C'}, O1:{x:440,y:125,l:'O',lp:[150],ch:'+',chA:-30}, H1:{x:500,y:95,l:'H'}, R:{x:440,y:255,l:'CH₃'},
-       O2:{x:680,y:280,l:'O',lp:[90,180]}, H2:{x:730,y:250,l:'H'}, H3:{x:730,y:310,l:'H'}},
-    bonds:['C=O1','O1-H1','C-R','Om-C','Om-Mm','O2-H2','O2-H3'],
-    arrows:[{f:['bd','O1','H1',.5],t:['at','O1',60],b:12}]},
-   {name:'Ester', p:1,
-    text:"On obtient l'éthanoate de méthyle et de l'eau. Toutes les étapes sont renversables : la constante d'équilibre vaut environ 4 pour un alcool primaire.",
-    a:{O1:{x:440,y:125,l:'O',lp:[150,30]}, H1:null},
-    bonds:['C=O1','C-R','Om-C','Om-Mm','O2-H2','O2-H3'],
-    x:[{k:'tx',x:600,y:90,s:'+ H⁺ régénéré',c:'n'}]}
-  ]},
- acyl:{tab:'Chlorure d\'acyle', name:'Chlorure d\'acyle et amine : synthèse d\'un amide', reac:'chlorure d\'éthanoyle + méthylamine, Et₃N',
-  prof:[[0,.6,'RCOCl'],[.15,.78,''],[.3,.45,'tétraédrique'],[.45,.55,''],[.6,.3,''],[.8,.38,''],[1,.1,'amide']],
-  facts:[['Réactivité','Le chlorure d\'acyle est le dérivé d\'acide le plus électrophile ; Cl⁻ est un excellent groupe partant.'],
-    ['Conditions','Réaction rapide et totale à froid, avec une base (pyridine, Et₃N) qui piège HCl.'],
-    ['Mécanisme','Addition nucléophile – élimination, commune à tous les dérivés d\'acides.'],
-    ['Variantes','Avec un alcool on obtient un ester. Les anhydrides réagissent de la même façon, un peu moins vite.']],
-  steps:[
-   {name:'Addition', p:0,
-    text:"Le doublet non liant de l'azote de la méthylamine attaque le carbone très électrophile du chlorure d'éthanoyle. Le doublet π de C=O bascule sur l'oxygène.",
-    a:{N:{x:300,y:190,l:'N',lp:[0]}, Mn:{x:225,y:190,l:'H₃C'}, Hn:{x:300,y:118,l:'H'}, Hn2:{x:300,y:262,l:'H'},
-       C:{x:420,y:190,l:'C'}, O:{x:420,y:115,l:'O',lp:[150,90]}, R:{x:385,y:252,l:'H₃C'}, Cl:{x:495,y:225,l:'Cl',lp:[90,0,-90]}},
-    bonds:['N-Mn','N-Hn','N-Hn2','C=O','C-R','C-Cl'],
-    arrows:[{f:['lp','N',0],t:['at','C',180],b:12},{f:['bd','C','O',.5,-5],t:['at','O',0],b:-10}]},
-   {name:'Élimination', p:.3,
-    text:"Le doublet de l'oxygène reforme la double liaison C=O et l'ion chlorure, excellent groupe partant, est éliminé.",
-    a:{N:{x:340,y:190,l:'N',ch:'+',chA:135}, Mn:{x:265,y:190,l:'H₃C'}, Hn:{x:340,y:118,l:'H'}, Hn2:{x:340,y:262,l:'H'},
-       O:{x:420,y:115,l:'O',lp:[90,20,160],ch:'−',chA:-150}, R:{x:420,y:266,l:'CH₃'}, Cl:{x:500,y:205,l:'Cl',lp:[90,0,-90]}},
-    bonds:['N-Mn','N-Hn','N-Hn2','N-C','C-O','C-R','C-Cl'],
-    arrows:[{f:['lp','O',20],t:['bd','C','O',.5,-6],b:14},{f:['bd','C','Cl',.5],t:['at','Cl',-120],b:-14}]},
-   {name:'Déprotonation', p:.6,
-    text:"La triéthylamine (ou un second équivalent d'amine) capte le proton porté par l'azote. Elle piège ainsi le chlorure d'hydrogène formé.",
-    a:{O:{x:460,y:125,l:'O',lp:[150,30]}, R:{x:460,y:255,l:'CH₃'}, Cl:{x:640,y:280,l:'Cl',lp:[90,180,-90,0],ch:'−',chA:45},
-       B:{x:340,y:45,l:'Et₃N',lp:[-55]}},
-    bonds:['N-Mn','N-Hn','N-Hn2','N-C','C=O','C-R'],
-    arrows:[{f:['lp','B',-55],t:['at','Hn',90],b:14},{f:['bd','N','Hn',.5],t:['at','N',60],b:12}]},
-   {name:'Amide', p:1,
-    text:"On obtient le N-méthyléthanamide et le chlorure de triéthylammonium. Avec un alcool à la place de l'amine, le même mécanisme donne un ester.",
-    a:{N:{x:340,y:190,l:'N',lp:[90]}, B:{x:285,y:60,l:'Et₃N',ch:'+',chA:135}, Hn:{x:350,y:60,l:'H'}},
-    bonds:['N-Mn','N-Hn2','N-C','C=O','C-R','B-Hn']}
-  ]},
- sap:{tab:'Saponification', name:'Saponification d\'un ester', reac:'éthanoate de méthyle + HO⁻',
-  prof:[[0,.6,'ester + HO⁻'],[.15,.8,''],[.3,.45,''],[.45,.6,''],[.6,.4,''],[.8,.45,''],[1,.05,'RCOO⁻']],
-  facts:[['Bilan','<span class="f">RCOOR′ + HO⁻ → RCOO⁻ + R′OH</span>, réaction totale.'],
-    ['Pourquoi totale','La dernière étape acido-basique (pKa ≈ 4,8 contre ≈ 16) est quasi totale.'],
-    ['Comparaison','L\'hydrolyse acide est un équilibre. La saponification est totale mais consomme HO⁻ : c\'est un réactif, pas un catalyseur.'],
-    ['Application','Fabrication des savons à partir des triglycérides.']],
-  steps:[
-   {name:'Addition', p:0,
-    text:"L'ion hydroxyde attaque le carbone électrophile de l'ester. Le doublet π de C=O bascule sur l'oxygène.",
-    a:{Oh:{x:300,y:190,l:'O',lp:[0,-90,180],ch:'−',chA:135}, Hh:{x:300,y:118,l:'H'}, C:{x:420,y:190,l:'C'}, O1:{x:420,y:115,l:'O',lp:[150,90]},
-       R:{x:385,y:252,l:'H₃C'}, Om:{x:500,y:215,l:'O',lp:[-60,-140]}, Mm:{x:575,y:185,l:'CH₃'}},
-    bonds:['Oh-Hh','C=O1','C-R','C-Om','Om-Mm'],
-    arrows:[{f:['lp','Oh',0],t:['at','C',180],b:12},{f:['bd','C','O1',.5,-5],t:['at','O1',0],b:-10}]},
-   {name:'Élimination', p:.3,
-    text:"Le doublet de l'oxygène reforme la double liaison C=O et l'ion méthanolate est éliminé.",
-    a:{Oh:{x:340,y:190,l:'O',lp:[-90,180]}, Hh:{x:340,y:118,l:'H'}, O1:{x:420,y:115,l:'O',lp:[90,20,160],ch:'−',chA:-150},
-       R:{x:420,y:266,l:'CH₃'}, Om:{x:500,y:205,l:'O',lp:[-90,0]}, Mm:{x:570,y:165,l:'CH₃'}},
-    bonds:['Oh-Hh','Oh-C','C-O1','C-R','C-Om','Om-Mm'],
-    arrows:[{f:['lp','O1',20],t:['bd','C','O1',.5,-6],b:14},{f:['bd','C','Om',.5],t:['at','Om',-120],b:-14}]},
-   {name:'Réaction acido-basique', p:.6,
-    text:"L'acide carboxylique formé est aussitôt déprotoné par l'ion méthanolate, base bien plus forte que l'ion carboxylate. Cette étape quasi totale rend la saponification totale.",
-    a:{C:{x:420,y:190,l:'C'}, O1:{x:460,y:125,l:'O',lp:[150,30]}, R:{x:460,y:255,l:'CH₃'},
-       Om:{x:250,y:70,l:'O',lp:[0,-90,90],ch:'−',chA:135}, Mm:{x:180,y:70,l:'H₃C'}},
-    bonds:['Oh-Hh','Oh-C','C=O1','C-R','Om-Mm'],
-    arrows:[{f:['lp','Om',0],t:['at','Hh',150],b:-12},{f:['bd','Oh','Hh',.5],t:['at','Oh',45],b:12}]},
-   {name:'Carboxylate', p:1,
-    text:"On obtient l'ion éthanoate et le méthanol. L'acide carboxylique est récupéré par acidification en fin de réaction.",
-    a:{Oh:{x:340,y:190,l:'O',lp:[90,-90,180],ch:'−',chA:135}, Hh:{x:300,y:70,l:'H'}, Om:{x:250,y:70,l:'O',lp:[90,-90]}},
-    bonds:['Om-Hh','Oh-C','C=O1','C-R','Om-Mm']}
-  ]},
- epox:{tab:'Époxydation', name:'Époxydation d\'un alcène par un peroxyacide', reac:'(Z)-but-2-ène + mCPBA',
-  prof:[[0,.5,'alcène + RCO₃H'],[.5,.88,'ET'],[1,.15,'époxyde']],
-  facts:[['Réactif','Peroxyacide RCO₃H, en général le mCPBA, dans le dichlorométhane.'],
-    ['Mécanisme','Concerté (état de transition « papillon ») : transfert d\'un atome d\'oxygène électrophile.'],
-    ['Stéréochimie','Addition syn, stéréospécifique : un alcène Z donne l\'époxyde cis.'],
-    ['Réactivité','Plus l\'alcène est riche en électrons (substitué), plus il réagit vite.']],
-  steps:[
-   {name:'Réactifs', p:0,
-    text:"Le peroxyacide (ici le mCPBA, R = 3-chlorophényle) transfère un atome d'oxygène à la double liaison C=C. Quatre doublets se déplacent en même temps.",
-    a:{C1:{x:300,y:150,l:'CH'}, C2:{x:300,y:230,l:'CH'}, Me1:{x:235,y:115,l:'H₃C'}, Me2:{x:235,y:265,l:'H₃C'},
-       Oa:{x:390,y:190,l:'O',lp:[130,-130]}, Ob:{x:450,y:140,l:'O',lp:[70,150]}, Cp:{x:530,y:170,l:'C'}, Oc:{x:530,y:250,l:'O',lp:[-30,-110]},
-       H:{x:455,y:245,l:'H'}, R:{x:605,y:140,l:'R'}},
-    bonds:['C1=C2','C1-Me1','C2-Me2','Oa-Ob','Ob-Cp','Cp=Oc','Cp-R','Oa-H'],
-    arrows:[{f:['bd','C1','C2',.5,5],t:['at','Oa',180],b:12},{f:['bd','Oa','H',.5],t:['bd','C2','Oa',.5],b:14},
-            {f:['bd','Oa','Ob',.5],t:['bd','Ob','Cp',.5,6],b:-14},{f:['bd','Cp','Oc',.5,-6],t:['at','H',0],b:-12}]},
-   {name:'Produits', p:1,
-    text:"On obtient le 2,3-diméthyloxirane cis et l'acide carboxylique. Les deux groupes méthyle, du même côté de la double liaison (Z), restent du même côté du cycle : l'époxydation est syn et stéréospécifique.",
-    a:{Oa:{x:365,y:190,l:'O',lp:[30,-30]}, Ob:{x:470,y:120,l:'O',lp:[150,30]}, Cp:{x:530,y:160,l:'C'}, Oc:{x:530,y:240,l:'O',lp:[0,-90]},
-       H:{x:470,y:262,l:'H'}, R:{x:605,y:130,l:'R'}},
-    bonds:['C1-C2','C1-Me1','C2-Me2','C1-Oa','C2-Oa','Ob=Cp','Cp-Oc','Cp-R','Oc-H']}
-  ]},
- oub:{tab:'Ouverture d\'époxyde', name:'Ouverture d\'un époxyde en milieu basique', reac:'2-méthyloxirane + CH₃O⁻ dans le méthanol',
-  prof:[[0,.55,'époxyde'],[.25,.85,'ET'],[.5,.3,'alcoolate'],[.72,.38,''],[1,.2,'éther-alcool']],
-  facts:[['Régiosélectivité','Milieu basique : SN2 sur le carbone le moins encombré.'],
-    ['Stéréochimie','Inversion du carbone attaqué : ouverture anti (un époxyde cyclique donne un produit trans).'],
-    ['Milieu acide','L\'époxyde protoné est attaqué sur le carbone le plus substitué (caractère SN1 partiel).'],
-    ['Force motrice','Tension du cycle à trois atomes.']],
-  steps:[
-   {name:'Attaque SN2', p:0,
-    text:"L'ion méthanolate attaque le carbone le moins encombré de l'époxyde, du côté opposé à l'oxygène. La tension du cycle est libérée.",
-    a:{Mo:{x:265,y:190,l:'CH₃O',lp:[0,60,-60],ch:'−',chA:120}, Ca:{x:390,y:190,l:'CH₂'}, Cb:{x:435,y:128,l:'CH'}, Me:{x:505,y:95,l:'CH₃'},
-       O:{x:470,y:190,l:'O',lp:[0,-90]}},
-    bonds:['Ca-Cb','Cb-O','Ca-O','Cb-Me'],
-    arrows:[{f:['lp','Mo',0],t:['at','Ca',180],b:16},{f:['bd','Ca','O',.5],t:['at','O',-130],b:-14}]},
-   {name:'Alcoolate', p:.5,
-    text:"On obtient un alcoolate, protoné par le solvant (méthanol). L'ion méthanolate est régénéré.",
-    a:{Mo:{x:270,y:200,l:'CH₃O',lp:[50,-50]}, Ca:{x:360,y:160,l:'CH₂'}, Cb:{x:440,y:200,l:'CH'}, Me:{x:440,y:275,l:'CH₃'},
-       O:{x:510,y:160,l:'O',lp:[90,-10,-110],ch:'−',chA:40}, Hs:{x:510,y:90,l:'H'}, Os:{x:510,y:36,l:'OCH₃',lp:[165]}},
-    bonds:['Mo-Ca','Ca-Cb','Cb-O','Cb-Me','Hs-Os'],
-    arrows:[{f:['lp','O',90],t:['at','Hs',-90],b:18},{f:['bd','Hs','Os'],t:['at','Os',-150],b:14}]},
-   {name:'Produit', p:1,
-    text:"On obtient le 1-méthoxypropan-2-ol. En milieu acide, l'attaque aurait lieu sur le carbone le plus substitué.",
-    a:{O:{x:510,y:160,l:'O',lp:[0,-90]}, Hs:{x:510,y:90,l:'H'}, Os:{x:610,y:60,l:'CH₃O',lp:[0,50,-50],ch:'−',chA:110}},
-    bonds:['Mo-Ca','Ca-Cb','Cb-O','Cb-Me','O-Hs']}
-  ]},
- lah:{tab:'LiAlH₄ + ester', name:'Réduction d\'un ester par LiAlH₄', reac:'éthanoate de méthyle + LiAlH₄, puis hydrolyse acide',
-  prof:[[0,.6,'ester'],[.12,.8,''],[.25,.45,''],[.37,.55,''],[.5,.38,'aldéhyde'],[.62,.6,''],[.75,.15,'alcoolate'],[.87,.22,''],[1,.05,'alcool']],
-  facts:[['Réactif','LiAlH₄, donneur d\'hydrure plus puissant que NaBH₄ ; solvant anhydre (éther, THF), hydrolyse ensuite.'],
-    ['Bilan','<span class="f">RCOOR′ → RCH₂OH + R′OH</span>'],
-    ['Aldéhyde','Il ne peut pas être isolé avec LiAlH₄ ; le DIBAL-H à −78 °C permet de s\'y arrêter.'],
-    ['Chimiosélectivité','LiAlH₄ réduit aussi acides, amides et époxydes ; NaBH₄ ne réduit que les aldéhydes et cétones.']],
-  steps:[
-   {name:'Premier hydrure', p:0,
-    text:"L'ion tétrahydruroaluminate AlH₄⁻ transfère un ion hydrure au carbone de l'ester. Le doublet π de C=O bascule sur l'oxygène.",
-    a:{Al:{x:205,y:190,l:'H₃Al',ch:'−',chA:90}, Ht:{x:285,y:190,l:'H'}, C:{x:420,y:190,l:'C'}, O:{x:420,y:115,l:'O',lp:[150,90]},
-       R:{x:385,y:252,l:'H₃C'}, Om:{x:505,y:215,l:'OCH₃'}},
-    bonds:['Al-Ht','C=O','C-R','C-Om'],
-    arrows:[{f:['bd','Al','Ht'],t:['at','C',180],b:55},{f:['bd','C','O',.5,-5],t:['at','O',0],b:-10}]},
-   {name:'Élimination', p:.25,
-    text:"Le doublet de l'oxygène reforme la double liaison C=O et l'ion méthanolate part : on obtient un aldéhyde.",
-    a:{Al:{x:205,y:90,l:'AlH₃'}, Ht:{x:345,y:190,l:'H'}, O:{x:420,y:115,l:'O',lp:[90,20,160],ch:'−',chA:-150},
-       R:{x:420,y:266,l:'CH₃'}, Om:{x:505,y:205,l:'OCH₃'}},
-    bonds:['Ht-C','C-O','C-R','C-Om'],
-    arrows:[{f:['lp','O',20],t:['bd','C','O',.5,-6],b:14},{f:['bd','C','Om',.5],t:['at','Om',-120],b:-14}]},
-   {name:'Aldéhyde', p:.5,
-    text:"L'éthanal formé est plus électrophile que l'ester : il est réduit aussitôt par un second ion hydrure. Avec LiAlH₄, on ne peut pas s'arrêter à l'aldéhyde.",
-    a:{O:{x:420,y:115,l:'O',lp:[150,90]}, Ht:{x:380,y:252,l:'H'}, R:{x:460,y:252,l:'CH₃'}, Om:{x:640,y:280,l:'CH₃O',lp:[0,50,-50],ch:'−',chA:110},
-       Al2:{x:205,y:190,l:'H₃Al',ch:'−',chA:90}, Ht2:{x:285,y:190,l:'H'}},
-    bonds:['Al2-Ht2','C=O','C-R','C-Ht'],
-    arrows:[{f:['bd','Al2','Ht2'],t:['at','C',180],b:55},{f:['bd','C','O',.5,-5],t:['at','O',0],b:-10}]},
-   {name:'Alcoolate', p:.75,
-    text:"On obtient un alcoolate. L'hydrolyse acide, réalisée à la fin, le protone.",
-    a:{Ht2:{x:345,y:190,l:'H'}, O:{x:420,y:115,l:'O',lp:[90,160,20],ch:'−',chA:-150}, Ht:{x:420,y:266,l:'H'}, R:{x:495,y:190,l:'CH₃'},
-       Al2:{x:205,y:290,l:'AlH₃'}, Hp:{x:510,y:60,l:'H',ch:'+',chA:45}},
-    bonds:['Ht2-C','C-O','C-R','C-Ht'],
-    arrows:[{f:['lp','O',20],t:['at','Hp',-150],b:-12}]},
-   {name:'Alcool', p:1,
-    text:"On obtient l'éthanol, et le méthanol issu du groupe OCH₃. LiAlH₄ réduit un ester en deux alcools ; NaBH₄, moins réactif, ne le réduit pas.",
-    a:{O:{x:420,y:115,l:'O',lp:[90,160]}, Hp:{x:485,y:85,l:'H'}},
-    bonds:['Ht2-C','C-O','C-R','C-Ht','O-Hp']}
   ]},
  hbr3:{tab:'ROH tertiaire + HBr', name:'Alcool tertiaire + HBr : SN1', reac:'2-méthylpropan-2-ol + HBr concentré',
   prof:[[0,.45,'ROH'],[.12,.58,''],[.25,.42,'ROH₂⁺'],[.45,.9,'ET'],[.62,.62,'R⁺'],[.8,.7,''],[1,.3,'RBr']],
@@ -1162,10 +821,7 @@ const MECHS = {
 };
 // classe et chapitre du cours (la décimale fixe l'ordre dans le chapitre)
 const META = {sn2:['PCSI',9.1], sn1:['PCSI',9.2], e2:['PCSI',10.1], e1:['PCSI',10.2], an:['PCSI',11.1], co2:['PCSI',11.2],
-  wil:['PCSI',16.1], hbr:['PCSI',16.2], hbr3:['PCSI',16.205], dhp:['PCSI',16.207], dhi:['PCSI',16.21], dhe:['PCSI',16.22], snts:['PCSI',16.31], cyc:['PCSI',16.32], ets:['PCSI',16.33], ac:['PCSI',16.4], nabh4:['PCSI',17.1],
-  da:['PC',11.1], hyd:['PC',14.1], hb:['PC',14.2], gep:['PC',15.1], ges:['PC',15.2],
-  alk:['PC',16.1], al:['PC',16.2], cro:['PC',16.3], mic:['PC',16.4], fis:['PC',17.1], acyl:['PC',17.2], sap:['PC',17.3],
-  epox:['PC',18.1], oub:['PC',18.2], lah:['PC',18.3]};
+  wil:['PCSI',16.1], hbr:['PCSI',16.2], hbr3:['PCSI',16.205], dhp:['PCSI',16.207], dhi:['PCSI',16.21], dhe:['PCSI',16.22], snts:['PCSI',16.31], cyc:['PCSI',16.32], ets:['PCSI',16.33], ac:['PCSI',16.4], nabh4:['PCSI',17.1]};
 
 /* ---------- Géométrie ---------- */
 const $ = id => document.getElementById(id);
@@ -1407,17 +1063,12 @@ function togglePlay(){
 }
 
 function init(){
-  const groups={PCSI:[],PC:[]};
-  Object.keys(MECHS).sort((a,b)=>META[a][1]-META[b][1]).forEach(k=>groups[META[k][0]].push(k));
-  for(const [g,ks] of Object.entries(groups)){
-    const row=document.createElement('div'); row.className='tabrow';
-    const lab=document.createElement('span'); lab.className='tabgrp'; lab.textContent=g; row.append(lab);
-    for(const k of ks){
-      const b=document.createElement('button'); b.className='tab'; b.role='tab'; b.dataset.k=k; b.textContent=MECHS[k].tab;
-      b.onclick=()=>selectMech(k,true); row.append(b);
-    }
-    $('tabs').append(row);
+  const row=document.createElement('div'); row.className='tabrow';
+  for(const k of Object.keys(MECHS).sort((a,b)=>META[a][1]-META[b][1])){
+    const b=document.createElement('button'); b.className='tab'; b.dataset.k=k; b.textContent=MECHS[k].tab;
+    b.onclick=()=>selectMech(k,true); row.append(b);
   }
+  $('tabs').append(row);
   $('btn-prev').onclick=()=>{stopPlay(); go(cur-1)};
   $('btn-next').onclick=()=>{stopPlay(); go(cur+1)};
   $('btn-play').onclick=togglePlay;
@@ -1429,35 +1080,175 @@ function init(){
     if(e.key==='ArrowRight'){ stopPlay(); go(cur+1); }
     else if(e.key==='ArrowLeft'){ stopPlay(); go(cur-1); }
   });
-  $('vb-meca').onclick=()=>{ setView('meca'); try{ history.replaceState(null,'','#'+mk) }catch(e){} };
+  const marquer = h => { try{ history.replaceState(null,'','#'+h) }catch(e){} };
+  $('vb-accueil').onclick=()=>{ setView('accueil'); marquer('chapitres'); };
+  $('vb-meca').onclick=()=>{ setView('meca'); marquer(mk); };
   $('vb-atlas').onclick=()=>openAtlas(atlasCourant || 'pcsi9');
+  $('vb-td').onclick=()=>{ setView('td'); marquer('td'); };
+  $('vb-colle').onclick=()=>{ setView('colle'); marquer('colle'); };
   const h=(location.hash||'').slice(1);
   selectMech(MECHS[h]?h:'sn2', false);
+  renderChapitres();
+  initColle();
+  setView('accueil');
   loadIndex().then(router);
   window.addEventListener('hashchange', router);
 }
-// #sn2 ouvre un mécanisme, #atlas-pcsi9 un atlas, #atlas-pcsi9-3 son exercice 3
+// #sn2 : mécanisme ; #atlas-pcsi9(-3) : atlas (et exercice) ; #td ; #colle(-9) : générateur (chapitre 9 coché)
 function router(){
   const h=(location.hash||'').slice(1);
-  const m=h.match(/^atlas-([a-z][a-z0-9]*?)(?:-(\d+))?$/);
+  const m=h.match(/^atlas-([a-z][a-z0-9]*?)(?:-(\d+))?$/), c=h.match(/^colle(?:-(\d+))?$/);
   if(m) openAtlas(m[1], m[2]?+m[2]:null);
   else if(MECHS[h]){ setView('meca'); if(h!==mk) selectMech(h,false); }
+  else if(h==='td') setView('td');
+  else if(c){ setView('colle'); if(c[1]) cocherColle([+c[1]]); }
+  else setView('accueil');
 }
 
 /* ---------- Atlas corrigés ---------- */
 let ATLAS=[], atlasCourant=null;
 const atlasCache={};
+const VUES=['accueil','meca','atlas','td','colle'];
 function setView(v){
-  $('view-meca').hidden = v!=='meca'; $('view-atlas').hidden = v!=='atlas';
-  $('vb-meca').setAttribute('aria-selected', v==='meca'); $('vb-atlas').setAttribute('aria-selected', v==='atlas');
-  if(v==='atlas') stopPlay();
+  for(const x of VUES){ $('view-'+x).hidden = x!==v; $('vb-'+x).setAttribute('aria-selected', x===v); }
+  if(v!=='meca') stopPlay();
+  window.scrollTo(0,0);
+}
+
+/* ---------- Chapitres (accueil) et TD ---------- */
+// n : numéro du cours ; td : suffixe des PDF (td/td<td>.pdf, td/corrige<td>.pdf) ; colle : chapitre de la banque de colle
+const CHAPITRES=[
+  {n:1,t:"Description et évolution d'un système vers un état final lors d'une transformation chimique",td:'1',colle:1},
+  {n:2,t:"Évolution temporelle d'un système : vitesse de réaction et lois de vitesse",td:'2',colle:2},
+  {n:3,t:"Modèle de la liaison covalente",td:'3',colle:3},
+  {n:4,t:"Géométrie et polarité des entités chimiques",td:'4',colle:4},
+  {n:5,t:"Forces intermoléculaires et application aux solvants",td:'5',colle:5},
+  {n:6,t:"Optimisation d'un procédé chimique",td:'6',colle:6},
+  {n:7,t:"Stéréochimie des molécules organiques",td:'7',colle:7},
+  {n:8,t:"Introduction à la réactivité en chimie organique",td:'8',colle:8},
+  {n:9,t:"Substitutions nucléophiles",td:'9',colle:9},
+  {n:10,t:"Éliminations",td:'10',colle:10},
+  {n:11,t:"Additions nucléophiles",td:'11',colle:11},
+  {n:12,t:"Réactions acido-basiques en solution aqueuse",td:'12',colle:12},
+  {n:13,t:"Lois cinétiques d'une réaction complexe",td:'13',colle:13},
+  {n:14,t:"Équilibre de précipitation",td:'14',colle:14},
+  {n:15,t:"Cristallographie",td:'15',colle:15},
+  {n:16,t:"Activation et protection de groupes caractéristiques",td:'16',colle:16},
+  {n:17,t:"Oxydoréduction en chimie organique",td:'17',colle:17},
+  {n:18,t:"Réactions d'oxydoréduction",td:'18',colle:18},
+  {n:19,t:"Diagrammes potentiel-pH",td:'19',colle:19},
+  {n:'Spectro',t:"Spectroscopies",td:'_spectro',colle:20},
+  {n:'Nomenclature',t:"Représentations et nomenclature des molécules organiques",td:null,colle:null}];
+const idAtlas = c => 'pcsi'+String(c.n).toLowerCase();
+function lien(texte, cls, action, href){
+  const a=document.createElement('a'); a.className='lk '+cls; a.textContent=texte; a.href=href||'#';
+  if(action) a.onclick=e=>{ e.preventDefault(); action(); };
+  return a;
+}
+function ligneChap(c, contenu){
+  const li=document.createElement('li'); li.className='chap';
+  const n=document.createElement('span'); n.className='chap-n'; n.textContent=typeof c.n==='number'?c.n:'·';
+  const t=document.createElement('h2'); t.className='chap-t'; t.textContent=c.t;
+  const l=document.createElement('div'); l.className='chap-l';
+  for(const x of contenu) l.append(x);
+  li.append(n,t,l); return li;
+}
+function liensTD(c){
+  return c.td ? [lien('TD','pdf',null,'td/td'+c.td+'.pdf'), lien('Corrigé du TD','pdf',null,'td/corrige'+c.td+'.pdf')]
+              : [Object.assign(document.createElement('span'),{className:'lk off',textContent:'pas de TD'})];
+}
+function renderChapitres(){
+  const ul=$('chap-list'), td=$('td-list'); ul.innerHTML=''; td.innerHTML='';
+  for(const c of CHAPITRES){
+    const liens=[lien('Atlas corrigé','',()=>openAtlas(idAtlas(c)),'#atlas-'+idAtlas(c)), ...liensTD(c)];
+    for(const k of Object.keys(MECHS).filter(k=>Math.floor(META[k][1])===c.n).sort((a,b)=>META[a][1]-META[b][1]))
+      liens.push(lien('▶ '+MECHS[k].tab,'meca',()=>{ setView('meca'); selectMech(k,true); },'#'+k));
+    if(c.colle) liens.push(lien('Sujet de colle','',()=>{ setView('colle'); cocherColle([c.colle]); },'#colle-'+c.colle));
+    ul.append(ligneChap(c, liens));
+    if(c.td) td.append(ligneChap(c, liensTD(c)));
+  }
+  for(const a of ul.querySelectorAll('a.pdf, #td-list a')) a.target='_blank';
+  for(const a of td.querySelectorAll('a')) a.target='_blank';
+}
+
+/* ---------- Générateur de colles (sans corrigé) ---------- */
+let COLLE=[]; const colleCache={};
+async function initColle(){
+  try{ const r=await fetch('colle/index.json',{cache:'no-cache'}); if(!r.ok) throw 0; COLLE=await r.json(); }catch(e){ COLLE=[]; }
+  const box=$('colle-chaps'); box.innerHTML='';
+  if(!COLLE.length){ box.innerHTML='<p class="amsg">La banque de colle n\'est pas disponible ici.</p>'; return; }
+  for(const c of COLLE){
+    const l=document.createElement('label'); l.htmlFor='cc-'+c.num;
+    l.innerHTML=`<input type="checkbox" id="cc-${c.num}" value="${c.num}"><span class="cn">${c.num<20?c.num:''}</span><span>${c.titre}</span>`;
+    l.title=`${c.nexos} exercices, ${c.ncours} questions de cours`;
+    box.append(l);
+  }
+  $('colle-form').onsubmit=e=>{ e.preventDefault(); tirerColle(); };
+  $('colle-print').onclick=()=>window.print();
+  const m=(location.hash||'').match(/^#colle-(\d+)$/); if(m) cocherColle([+m[1]]);
+}
+function cocherColle(nums){
+  for(const i of $('colle-chaps').querySelectorAll('input')) i.checked=nums.includes(+i.value);
+  try{ history.replaceState(null,'','#colle'+(nums.length===1?'-'+nums[0]:'')) }catch(e){}
+}
+const hasard = a => a[Math.floor(Math.random()*a.length)];
+function melanger(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+async function tirerColle(){
+  const nums=[...$('colle-chaps').querySelectorAll('input:checked')].map(i=>+i.value);
+  const msg=$('colle-msg'), out=$('colle-out');
+  if(!nums.length){ msg.textContent='Cochez au moins un chapitre.'; return; }
+  msg.textContent='';
+  out.innerHTML='<p class="amsg">Tirage en cours…</p>';
+  let datas;
+  try{ datas=await Promise.all(nums.map(async n=>{
+    if(!colleCache[n]){ const r=await fetch('colle/c'+n+'.json',{cache:'no-cache'}); colleCache[n]=await r.json(); }
+    return colleCache[n]; })); }
+  catch(e){ out.innerHTML='<p class="amsg">Impossible de charger la banque. Vérifiez la connexion puis réessayez.</p>'; return; }
+  const nb=+$('colle-n').value, diff=+$('colle-diff').value;
+  // diff 0 (variée) : difficultés croissantes 1, 2, 3 ; sinon la difficulté choisie, ou à défaut la plus proche
+  const pool=datas.flatMap(d=>d.exos.map(x=>({...x, d})));
+  const choisis=[];
+  for(let k=0;k<nb;k++){
+    const cible = diff || [1,2,3][Math.min(k + (nb<3?1:0), 2)];
+    const libres=pool.filter(x=>!choisis.includes(x));
+    if(!libres.length) break;
+    const ecart=Math.min(...libres.map(x=>Math.abs(x.diff-cible)));
+    // alterner les chapitres quand il y en a plusieurs
+    const dejaChap=choisis.map(x=>x.d.num);
+    let cands=libres.filter(x=>Math.abs(x.diff-cible)===ecart);
+    const autres=cands.filter(x=>!dejaChap.includes(x.d.num)); if(autres.length) cands=autres;
+    choisis.push(hasard(cands));
+  }
+  const avecCours=$('colle-cours').checked && datas.some(d=>d.cours.length);
+  const dc=avecCours ? hasard(datas.filter(d=>d.cours.length)) : null;
+  const titres=datas.map(d=>(d.num<20?d.num+'. ':'')+d.titre).join(' ; ');
+  out.innerHTML='';
+  const s=document.createElement('article'); s.className='sujet';
+  s.innerHTML=`<h2>Sujet de colle</h2><p class="meta">${titres}</p>`;
+  // les images sont propres à chaque chapitre de la banque : on les prend dans le chapitre de la section
+  const images=(el,d)=>{ for(const im of el.querySelectorAll('img[data-k]')){
+    im.src=d.img[im.dataset.k]||'';
+    if(im.classList.contains('tikz')) im.onload=()=>{ im.style.width=(im.naturalWidth/2)+'px'; };
+  } };
+  if(dc){
+    const q=document.createElement('section');
+    q.innerHTML=`<h3>Question de cours</h3><div class="sheet">${hasard(dc.cours)}</div>`; images(q,dc); s.append(q);
+  }
+  choisis.forEach((x,i)=>{
+    const e=document.createElement('section');
+    e.innerHTML=`<h3>Exercice ${i+1} <span class="diff" title="difficulté">${'★'.repeat(x.diff)}</span></h3><div class="sheet">${x.html}</div>`;
+    images(e,x.d); s.append(e);
+  });
+  if(choisis.length<nb) msg.textContent=`La banque ne contient que ${choisis.length} exercice(s) pour ces chapitres.`;
+  out.append(s); $('colle-print').hidden=false;
 }
 async function loadIndex(){
   try{ const r=await fetch('atlas/index.json',{cache:'no-cache'}); if(!r.ok) throw 0; ATLAS=await r.json(); }catch(e){ ATLAS=[]; }
   const t=$('atlas-tabs'), sel=$('atlas-select'); t.innerHTML=''; sel.innerHTML='';
   const maj = s => s[0].toUpperCase()+s.slice(1);
   for(const g of ['PCSI','PC']){
-    const h=document.createElement('h4'); h.textContent=g; t.append(h);
+    if(!ATLAS.some(c=>c.classe===g)) continue;
+    const h=document.createElement('h4'); h.textContent='Chapitres'; t.append(h);
     const og=document.createElement('optgroup'); og.label=g; sel.append(og);
     for(const c of ATLAS.filter(c=>c.classe===g)){
       const num = typeof c.chap==='number' ? c.chap : '';
