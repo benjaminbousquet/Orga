@@ -1424,7 +1424,7 @@ function setView(v){
   if(v==='atlas') stopPlay();
 }
 async function loadIndex(){
-  try{ const r=await fetch('atlas/index.json'); if(!r.ok) throw 0; ATLAS=await r.json(); }catch(e){ ATLAS=[]; }
+  try{ const r=await fetch('atlas/index.json',{cache:'no-cache'}); if(!r.ok) throw 0; ATLAS=await r.json(); }catch(e){ ATLAS=[]; }
   const t=$('atlas-tabs'); t.innerHTML='';
   for(const g of ['PCSI','PC']){
     const row=document.createElement('div'); row.className='tabrow';
@@ -1457,7 +1457,7 @@ async function openAtlas(id, n){
   if(!info){ body.innerHTML='<p class="amsg">Les atlas ne sont pas disponibles ici : ouvrez la page publiée pour les consulter.</p>'; return; }
   body.innerHTML='<p class="amsg">Chargement de l\'atlas…</p>';
   let d=atlasCache[id];
-  if(!d){ try{ const r=await fetch('atlas/'+id+'.json'); d=atlasCache[id]=await r.json(); }
+  if(!d){ try{ const r=await fetch('atlas/'+id+'.json',{cache:'no-cache'}); d=atlasCache[id]=await r.json(); }
           catch(e){ body.innerHTML='<p class="amsg">Impossible de charger cet atlas. Vérifiez la connexion puis réessayez.</p>'; return; } }
   if(atlasCourant!==id) return;
   body.innerHTML='';
