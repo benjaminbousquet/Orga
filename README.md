@@ -9,3 +9,5 @@ Site de chimie de PCSI : https://benjaminbousquet.github.io/Orga/
 - **Colles** : `colle/`, banque de colle (questions de cours et énoncés, sans corrigés) exportée par `colle_web.py`.
 
 Adresses directes : `#sn2` (mécanisme), `#atlas-pcsi9-3` (exercice d'atlas), `#td`, `#colle-9` (générateur, chapitre 9 coché).
+
+- `pc/` : page PC séparée (mécanismes et atlas de PC), cible des QR codes des documents de PC.
