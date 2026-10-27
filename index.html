@@ -58,7 +58,7 @@ h1{font-family:var(--display);font-weight:600;font-size:clamp(1.6rem,3vw,2.1rem)
   border-radius:999px;font-size:.78em;margin-right:.3em;vertical-align:middle;font-variant-numeric:tabular-nums}
 .sheet .ct{text-align:center}
 .sheet .sm{font-size:.86em;color:#4b5563}
-.sheet .m{font-family:var(--chem)}
+.sheet .m,.sheet .ce{font-family:var(--chem)}
 .sheet sub,.sheet sup{font-size:.72em}
 .xa{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .35em;font-size:.82em;line-height:1.15;font-family:var(--body)}
 .xa-f{display:block;align-self:stretch;min-width:3.2em;border-top:1.4px solid currentColor;position:relative;margin:3px 0}
@@ -1404,7 +1404,15 @@ function init(){
   $('vb-atlas').onclick=()=>openAtlas(atlasCourant || 'pcsi9');
   const h=(location.hash||'').slice(1);
   selectMech(MECHS[h]?h:'sn2', false);
-  loadIndex().then(()=>{ const m=h.match(/^atlas-([a-z]+\d+)(?:-(\d+))?$/); if(m) openAtlas(m[1], m[2]?+m[2]:null); });
+  loadIndex().then(router);
+  window.addEventListener('hashchange', router);
+}
+// #sn2 ouvre un mécanisme, #atlas-pcsi9 un atlas, #atlas-pcsi9-3 son exercice 3
+function router(){
+  const h=(location.hash||'').slice(1);
+  const m=h.match(/^atlas-([a-z][a-z0-9]*?)(?:-(\d+))?$/);
+  if(m) openAtlas(m[1], m[2]?+m[2]:null);
+  else if(MECHS[h]){ setView('meca'); if(h!==mk) selectMech(h,false); }
 }
 
 /* ---------- Atlas corrigés ---------- */
@@ -1422,7 +1430,8 @@ async function loadIndex(){
     const row=document.createElement('div'); row.className='tabrow';
     const lab=document.createElement('span'); lab.className='tabgrp'; lab.textContent=g; row.append(lab);
     for(const c of ATLAS.filter(c=>c.classe===g)){
-      const b=document.createElement('button'); b.className='tab atab'; b.dataset.a=c.id; b.innerHTML=`Ch. ${c.chap} · ${c.titre}`;
+      const b=document.createElement('button'); b.className='tab atab'; b.dataset.a=c.id;
+      b.innerHTML=typeof c.chap==='number' ? `Ch. ${c.chap} · ${c.titre}` : c.titre[0].toUpperCase()+c.titre.slice(1);
       b.title=b.textContent; b.onclick=()=>openAtlas(c.id); row.append(b);
     }
     t.append(row);
@@ -1433,7 +1442,7 @@ function renderAtlasLinks(){
   const ul=$('atlas-links'); ul.innerHTML='';
   for(const c of ATLAS) for(const x of c.exos) if(x.meca.includes(mk)){
     const li=document.createElement('li'), a=document.createElement('a');
-    a.href='#atlas-'+c.id+'-'+x.n; a.innerHTML=`${c.classe} ch. ${c.chap}, exercice ${x.n} : ${x.titre}`;
+    a.href='#atlas-'+c.id+'-'+x.n; a.innerHTML=`${c.classe} ${typeof c.chap==='number'?'ch. '+c.chap:c.chap}, exercice ${x.n} : ${x.titre}`;
     a.onclick=e=>{ e.preventDefault(); openAtlas(c.id, x.n); };
     li.append(a); ul.append(li);
   }
@@ -1453,7 +1462,7 @@ async function openAtlas(id, n){
   if(atlasCourant!==id) return;
   body.innerHTML='';
   const h=document.createElement('div'); h.className='achap';
-  h.innerHTML=`<h2>${d.titre[0].toUpperCase()+d.titre.slice(1)}</h2><span>${d.classe} · chapitre ${d.chap} · ${d.exos.length} exercices</span>`;
+  h.innerHTML=`<h2>${d.titre[0].toUpperCase()+d.titre.slice(1)}</h2><span>${d.classe}${typeof d.chap==='number'?' · chapitre '+d.chap:''} · ${d.exos.length} exercices</span>`;
   body.append(h);
   for(const x of d.exos){
     const art=document.createElement('article'); art.className='exo'; art.id='ex-'+x.n;

@@ -1,6 +1,6 @@
 # Mécanismes animés
 
-Mécanismes de chimie organique de PCSI et de PC, animés pas à pas (flèches courbes, profil énergétique, mode quiz), et corrigés des atlas d'entraînement d'orga.
+Mécanismes de chimie organique de PCSI et de PC, animés pas à pas (flèches courbes, profil énergétique, mode quiz), et corrigés de tous les atlas d'entraînement de PCSI et de PC.
 
 Page en ligne : https://benjaminbousquet.github.io/Orga/
 
