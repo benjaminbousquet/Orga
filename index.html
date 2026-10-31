@@ -124,6 +124,17 @@ ul.it li::before{content:"• "}
 .bv-etapes li{counter-increment:etape;background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:10px 16px 10px 52px;position:relative}
 .bv-etapes li::before{content:counter(etape);position:absolute;left:14px;top:9px;width:26px;height:26px;border-radius:50%;
   background:var(--accent);color:var(--paper);font:600 14px/26px var(--body);text-align:center}
+/* TD interactifs */
+.tdi-top{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.tdi-sel{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:.9rem;min-width:0;flex:1 1 240px}
+.tq{display:grid;gap:8px;min-width:0}
+.tq-n{font:600 12px var(--body);letter-spacing:.06em;text-transform:uppercase;color:#4b5563;margin-right:.3em}
+.tq-ind{display:grid;gap:6px;justify-items:start}
+.sheet ul.lt{margin:.3em 0;padding-left:0;list-style:none;display:grid;gap:4px}
+.hint{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:6px;padding:8px 12px;justify-self:stretch}
+.hint-n{font:600 12px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-right:.4em}
+.lk.tdi{background:transparent;border-color:var(--accent)}
+.sheet .res{border:1.5px solid #1f6f4a;border-radius:6px;padding:4px 10px;margin:6px 0;font-weight:600;display:inline-block}
 /* liste des chapitres (accueil et TD) */
 .chaps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .chap{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:12px 16px;display:grid;
@@ -285,8 +296,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       </article>
       <article class="bv-card">
         <h4>TD</h4>
-        <p>Les feuilles de TD et leur corrigé en PDF. Cherchez les exercices avant la séance ; le corrigé
-          sert à vérifier, pas à remplacer la recherche.</p>
+        <p>Les feuilles de TD et leur corrigé en PDF, et une version en ligne <strong>avec indices</strong> :
+          pour chaque question, des coups de pouce à afficher un par un, puis la correction de l'exercice.
+          Cherchez avant la séance ; le corrigé sert à vérifier, pas à remplacer la recherche.</p>
         <a class="lk" href="#td" data-go="td">Voir les TD</a>
       </article>
       <article class="bv-card">
@@ -304,7 +316,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <li><strong>Faire l'atlas.</strong> Traitez chaque item sur papier <em>avant</em> d'afficher la correction.
         Quand une série est réussie, passez à la série suivante pour vérifier que c'est acquis.</li>
       <li><strong>Chercher le TD.</strong> Les exercices de TD mobilisent plusieurs notions à la fois :
-        cherchez-les vraiment, puis comparez avec le corrigé.</li>
+        cherchez-les vraiment. En cas de blocage, prenez un indice à la fois dans la version en ligne,
+        puis comparez avec la correction.</li>
       <li><strong>Revoir les mécanismes.</strong> En organique, refaites les mécanismes du chapitre en mode quiz
         jusqu'à placer toutes les flèches sans aide.</li>
       <li><strong>Se tester en colle.</strong> Tirez un sujet, préparez-le en temps limité, seul ou à plusieurs,
@@ -328,6 +341,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <p class="intro">Les chapitres de chimie de PCSI. Pour chacun : l'atlas d'entraînement corrigé, le TD et son corrigé,
       les mécanismes animés et les sujets de colle.</p>
     <ol class="chaps" id="chap-list"></ol>
+  </section>
+  <section id="view-tdi" class="pane" role="tabpanel" aria-labelledby="vb-td" hidden>
+    <div class="tdi-top">
+      <a class="lk" href="#td" id="tdi-retour">← Tous les TD</a>
+      <label class="tdi-sel" for="tdi-select">TD <select id="tdi-select" class="asel"></select></label>
+    </div>
+    <p class="intro">Cherchez chaque question sur papier. Si vous bloquez, affichez un indice, puis le suivant seulement
+      si nécessaire. La correction complète de l'exercice est à la fin : ne l'ouvrez qu'après avoir tout cherché.</p>
+    <div id="tdi-body" class="abody"></div>
   </section>
   <section id="view-td" class="pane" role="tabpanel" aria-labelledby="vb-td" hidden>
     <p class="intro">Les feuilles de TD de chaque chapitre et leur corrigé, au format PDF.</p>
@@ -1189,7 +1211,8 @@ function init(){
   renderChapitres();
   initColle();
   setView('bienvenue');
-  loadIndex().then(router);
+  Promise.all([loadIndex(), loadTDI()]).then(router);
+  $('tdi-retour').onclick=e=>{ e.preventDefault(); $('vb-td').click(); };
   window.addEventListener('hashchange', router);
 }
 // #sn2 : mécanisme ; #atlas-pcsi9(-3) : atlas (et exercice) ; #td ; #colle(-9) : générateur (chapitre 9 coché)
@@ -1199,6 +1222,7 @@ function router(){
   if(m) openAtlas(m[1], m[2]?+m[2]:null);
   else if(MECHS[h]){ setView('meca'); if(h!==mk) selectMech(h,false); }
   else if(h==='td') setView('td');
+  else if(/^td-\w+$/.test(h)) openTD('tdi'+h.slice(3));
   else if(c){ setView('colle'); if(c[1]) cocherColle([+c[1]]); }
   else if(h==='chapitres') setView('accueil');
   else setView('bienvenue');
@@ -1207,9 +1231,9 @@ function router(){
 /* ---------- Atlas corrigés ---------- */
 let ATLAS=[], atlasCourant=null;
 const atlasCache={}, atlasSerie={};  // série affichée par atlas (1 = celle des QR codes des polys)
-const VUES=['bienvenue','accueil','meca','atlas','td','colle'];
+const VUES=['bienvenue','accueil','meca','atlas','td','tdi','colle'];
 function setView(v){
-  for(const x of VUES){ $('view-'+x).hidden = x!==v; $('vb-'+x).setAttribute('aria-selected', x===v); }
+  for(const x of VUES){ $('view-'+x).hidden = x!==v; if(x!=='tdi') $('vb-'+x).setAttribute('aria-selected', x===v || (x==='td' && v==='tdi')); }
   if(v!=='meca') stopPlay();
   window.scrollTo(0,0);
 }
@@ -1253,8 +1277,11 @@ function ligneChap(c, contenu){
   li.append(n,t,l); return li;
 }
 function liensTD(c){
-  return c.td ? [lien('TD','pdf',null,'td/td'+c.td+'.pdf'), lien('Corrigé du TD','pdf',null,'td/corrige'+c.td+'.pdf')]
-              : [Object.assign(document.createElement('span'),{className:'lk off',textContent:'pas de TD'})];
+  if(!c.td) return [Object.assign(document.createElement('span'),{className:'lk off',textContent:'pas de TD'})];
+  const l=[lien('TD','pdf',null,'td/td'+c.td+'.pdf')];
+  if(TDI.some(x=>x.id==='tdi'+c.td)) l.push(lien('Indices et correction','tdi',()=>openTD('tdi'+c.td),'#td-'+c.td));
+  l.push(lien('Corrigé du TD','pdf',null,'td/corrige'+c.td+'.pdf'));
+  return l;
 }
 function renderChapitres(){
   const ul=$('chap-list'), td=$('td-list'); ul.innerHTML=''; td.innerHTML='';
@@ -1266,8 +1293,72 @@ function renderChapitres(){
     ul.append(ligneChap(c, liens));
     if(c.td) td.append(ligneChap(c, liensTD(c)));
   }
-  for(const a of ul.querySelectorAll('a.pdf, #td-list a')) a.target='_blank';
-  for(const a of td.querySelectorAll('a')) a.target='_blank';
+  for(const a of ul.querySelectorAll('a.pdf')) a.target='_blank';
+  for(const a of td.querySelectorAll('a.pdf')) a.target='_blank';
+}
+
+/* ---------- TD interactifs : indices gradués puis correction ---------- */
+let TDI=[], tdiCourant=null; const tdiCache={};
+async function loadTDI(){
+  try{ const r=await fetch('td/tdi_index.json',{cache:'no-cache'}); if(!r.ok) throw 0; TDI=await r.json(); }catch(e){ TDI=[]; }
+  const sel=$('tdi-select'); sel.innerHTML='';
+  for(const c of TDI){ const o=document.createElement('option'); o.value=c.id;
+    o.innerHTML=(typeof c.chap==='number'?c.chap+'. ':'')+c.titre; sel.append(o); }
+  sel.onchange=()=>openTD(sel.value);
+  renderChapitres();
+}
+async function openTD(id){
+  setView('tdi'); tdiCourant=id; $('tdi-select').value=id;
+  try{ history.replaceState(null,'','#td-'+id.slice(3)) }catch(e){}
+  const body=$('tdi-body');
+  if(!TDI.some(c=>c.id===id)){ body.innerHTML='<p class="amsg">Ce TD n\'a pas encore de version avec indices.</p>'; return; }
+  body.innerHTML='<p class="amsg">Chargement du TD…</p>';
+  let d=tdiCache[id];
+  if(!d){ try{ const r=await fetch('td/'+id+'.json',{cache:'no-cache'}); d=tdiCache[id]=await r.json(); }
+          catch(e){ body.innerHTML='<p class="amsg">Impossible de charger ce TD. Vérifiez la connexion puis réessayez.</p>'; return; } }
+  if(tdiCourant!==id) return;
+  body.innerHTML='';
+  const h=document.createElement('div'); h.className='achap';
+  h.innerHTML=`<h2>${d.titre}</h2><span>${typeof d.chap==='number'?'chapitre '+d.chap+' · ':''}${d.exos.length} exercices</span>`;
+  body.append(h);
+  for(const x of d.exos){
+    const art=document.createElement('article'); art.className='exo'; art.id='td-ex-'+(x.partie||'')+x.n;
+    art.innerHTML=`<div class="exo-h"><span class="exo-n">${x.partie?'Partie '+x.partie+' · ':''}Exercice ${x.n}</span><h3>${x.titre}</h3>${x.diff?`<span class="diff" title="difficulté">${'★'.repeat(x.diff)}</span>`:''}</div>`
+      + (x.intro?`<div class="sheet">${x.intro}</div>`:'');
+    x.questions.forEach((q,k)=>{
+      const bloc=document.createElement('div'); bloc.className='tq';
+      bloc.innerHTML=`<div class="sheet">${x.numerotees?`<span class="tq-n">Question ${k+1}</span> `:''}${q.html}</div>`;
+      if(q.indices.length){
+        const zone=document.createElement('div'); zone.className='tq-ind';
+        const b=document.createElement('button'); b.className='btn';
+        let vus=0;
+        const maj=()=>{ b.textContent = vus===0 ? `Indice 1 / ${q.indices.length}` : `Indice ${vus+1} / ${q.indices.length}`; };
+        maj();
+        b.onclick=()=>{
+          const p=document.createElement('div'); p.className='hint';
+          p.innerHTML=`<span class="hint-n">Indice ${vus+1}</span> ${q.indices[vus]}`; zone.insertBefore(p,b); vus++;
+          if(vus>=q.indices.length) b.remove(); else maj();
+        };
+        zone.append(b); bloc.append(zone);
+      }
+      art.append(bloc);
+    });
+    if(x.corrige){
+      const a=document.createElement('div'); a.className='exo-a';
+      a.innerHTML='<button class="btn">Afficher la correction de l\'exercice</button>';
+      const corr=document.createElement('div'); corr.className='sheet corr'; corr.hidden=true; corr.innerHTML=x.corrige;
+      const btn=a.querySelector('.btn'); btn.setAttribute('aria-expanded','false');
+      btn.onclick=()=>{ corr.hidden=!corr.hidden; btn.textContent=corr.hidden?'Afficher la correction de l\'exercice':'Masquer la correction';
+        btn.setAttribute('aria-expanded', !corr.hidden); };
+      art.append(a, corr);
+    }
+    art.querySelectorAll('img[data-k]').forEach(im=>{
+      im.src=d.img[im.dataset.k]||'';
+      if(im.classList.contains('tikz')) im.onload=()=>{ im.style.width=(im.naturalWidth/2)+'px'; };
+    });
+    body.append(art);
+  }
+  window.scrollTo(0,0);
 }
 
 /* ---------- Générateur de colles (sans corrigé) ---------- */
