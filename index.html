@@ -64,6 +64,8 @@ header.top{display:grid;gap:12px;justify-content:normal;align-items:normal}
 .achap{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
 .achap h2{font-family:var(--display);font-weight:500;font-size:1.3rem;margin:0}
 .achap span{color:var(--muted)}
+.aseries{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:14px;color:var(--muted)}
+.aseries .chip[aria-pressed="true"]{background:var(--arrow);color:var(--paper)}
 .exo{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;display:grid;gap:10px;min-width:0}
 .exo-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
 .exo-h h3{font-family:var(--display);font-weight:500;font-size:1.1rem;margin:0}
@@ -1113,7 +1115,7 @@ function router(){
 
 /* ---------- Atlas corrigés ---------- */
 let ATLAS=[], atlasCourant=null;
-const atlasCache={};
+const atlasCache={}, atlasSerie={};  // série affichée par atlas (1 = celle des QR codes des polys)
 const VUES=['accueil','meca','atlas','td','colle'];
 function setView(v){
   for(const x of VUES){ $('view-'+x).hidden = x!==v; $('vb-'+x).setAttribute('aria-selected', x===v); }
@@ -1286,14 +1288,26 @@ async function openAtlas(id, n){
   const info=ATLAS.find(c=>c.id===id);
   if(!info){ body.innerHTML='<p class="amsg">Les atlas ne sont pas disponibles ici : ouvrez la page publiée pour les consulter.</p>'; return; }
   body.innerHTML='<p class="amsg">Chargement de l\'atlas…</p>';
-  let d=atlasCache[id];
-  if(!d){ try{ const r=await fetch('atlas/'+id+'.json',{cache:'no-cache'}); d=atlasCache[id]=await r.json(); }
+  const series=info.series||[1], s=series.includes(atlasSerie[id])?atlasSerie[id]:series[0], cle=id+'_s'+s;
+  let d=atlasCache[cle];
+  if(!d){ try{ const r=await fetch('atlas/'+(s===1?id:cle)+'.json',{cache:'no-cache'}); d=atlasCache[cle]=await r.json(); }
           catch(e){ body.innerHTML='<p class="amsg">Impossible de charger cet atlas. Vérifiez la connexion puis réessayez.</p>'; return; } }
-  if(atlasCourant!==id) return;
+  if(atlasCourant!==id || (atlasSerie[id]||series[0])!==s) return;
   body.innerHTML='';
   const h=document.createElement('div'); h.className='achap';
   h.innerHTML=`<h2>${d.titre[0].toUpperCase()+d.titre.slice(1)}</h2><span>${d.classe}${typeof d.chap==='number'?' · chapitre '+d.chap:''} · ${d.exos.length} exercices</span>`;
   body.append(h);
+  if(series.length>1){
+    const p=document.createElement('div'); p.className='aseries';
+    p.innerHTML='<span>Mêmes exercices, autres exemples :</span>';
+    for(const k of series){
+      const b=document.createElement('button'); b.className='chip'; b.textContent='Série '+k;
+      b.setAttribute('aria-pressed', k===s);
+      b.onclick=()=>{ atlasSerie[id]=k; openAtlas(id); };
+      p.append(b);
+    }
+    body.append(p);
+  }
   for(const x of d.exos){
     const art=document.createElement('article'); art.className='exo'; art.id='ex-'+x.n;
     art.innerHTML=`<div class="exo-h"><span class="exo-n">Exercice ${x.n}</span><h3>${x.titre}</h3>${x.diff?`<span class="diff" title="difficulté">${'★'.repeat(x.diff)}</span>`:''}</div>
@@ -1319,5 +1333,6 @@ async function openAtlas(id, n){
 const fontsReady = document.fonts ? Promise.race([document.fonts.ready, new Promise(r=>setTimeout(r,1500))]) : Promise.resolve();
 fontsReady.then(()=>{ boxCache={}; init(); });
 </script>
+
 
 </html>
