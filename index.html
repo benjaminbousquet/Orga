@@ -109,6 +109,21 @@ ul.it li::before{content:"• "}
 .mtab{flex:0 0 auto}
 @media (max-width:900px){.mtab-s{display:none}}
 .pane{display:grid;gap:16px}
+/* page d'accueil (explication du site) */
+.bienv{gap:18px}
+.bv-hero{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--accent);border-radius:10px;padding:16px 20px}
+.bv-hero h2{font:600 1.4rem var(--display);margin:0 0 6px}
+.bv-hero p{margin:0;max-width:75ch}
+.bv-titre{font:600 1.15rem var(--display);margin:6px 0 -6px}
+.bv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px}
+.bv-card{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.bv-card h4{font:600 1.05rem var(--display);margin:0;color:var(--accent)}
+.bv-card p{margin:0;flex:1}
+.bv-card .lk{align-self:flex-start}
+.bv-etapes{margin:0;padding:0;list-style:none;counter-reset:etape;display:grid;gap:8px}
+.bv-etapes li{counter-increment:etape;background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:10px 16px 10px 52px;position:relative}
+.bv-etapes li::before{content:counter(etape);position:absolute;left:14px;top:9px;width:26px;height:26px;border-radius:50%;
+  background:var(--accent);color:var(--paper);font:600 14px/26px var(--body);text-align:center}
 /* liste des chapitres (accueil et TD) */
 .chaps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .chap{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:12px 16px;display:grid;
@@ -225,7 +240,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   <header class="top">
     <h1>Chimie en PCSI</h1>
     <nav class="maintabs" role="tablist" aria-label="Parties du site">
-      <button class="mtab" role="tab" id="vb-accueil" aria-selected="true" aria-controls="view-accueil">
+      <button class="mtab" role="tab" id="vb-bienvenue" aria-selected="true" aria-controls="view-bienvenue">
+        <span class="mtab-t">Accueil</span><span class="mtab-s">à lire en premier</span></button>
+      <button class="mtab" role="tab" id="vb-accueil" aria-selected="false" aria-controls="view-accueil">
         <span class="mtab-t">Chapitres</span><span class="mtab-s">le programme de l'année</span></button>
       <button class="mtab" role="tab" id="vb-meca" aria-selected="false" aria-controls="view-meca">
         <span class="mtab-t">Mécanismes animés</span><span class="mtab-s">chimie organique, étape par étape</span></button>
@@ -237,7 +254,77 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         <span class="mtab-t">Colles</span><span class="mtab-s">générateur de sujets</span></button>
     </nav>
   </header>
-  <section id="view-accueil" class="pane" role="tabpanel" aria-labelledby="vb-accueil">
+  <section id="view-bienvenue" class="pane bienv" role="tabpanel" aria-labelledby="vb-bienvenue">
+    <div class="bv-hero">
+      <h2>Bienvenue</h2>
+      <p>Ce site accompagne le cours de chimie de PCSI. Il rassemble, chapitre par chapitre, de quoi
+        <strong>s'entraîner seul</strong> : des exercices courts corrigés, les TD et leurs corrigés, des mécanismes
+        de chimie organique animés et un générateur de sujets de colle. Il fonctionne aussi bien sur téléphone que sur ordinateur.</p>
+    </div>
+
+    <h3 class="bv-titre">Ce que vous trouverez sur le site</h3>
+    <div class="bv-grid">
+      <article class="bv-card">
+        <h4>Chapitres</h4>
+        <p>La liste des chapitres de l'année. Pour chacun, tous les liens au même endroit : atlas, TD, corrigé,
+          mécanismes animés et colle.</p>
+        <a class="lk" href="#chapitres" data-go="accueil">Voir les chapitres</a>
+      </article>
+      <article class="bv-card">
+        <h4>Atlas d'entraînement</h4>
+        <p>Des séries d'exercices courts et répétitifs pour acquérir les automatismes (tableau d'avancement, pH,
+          descripteurs R/S, mécanismes…), avec une correction à afficher question par question.
+          Chaque atlas existe en <strong>3 séries</strong> : mêmes exercices, autres exemples.</p>
+        <a class="lk" href="#atlas-pcsi1" data-go="atlas">Ouvrir les atlas</a>
+      </article>
+      <article class="bv-card">
+        <h4>Mécanismes animés</h4>
+        <p>Les mécanismes de chimie organique étape par étape, avec le profil énergétique. En <strong>mode quiz</strong>,
+          les flèches sont cachées : proposez-les vous-même avant de les révéler.</p>
+        <a class="lk meca" href="#sn2" data-go="meca">Voir les mécanismes</a>
+      </article>
+      <article class="bv-card">
+        <h4>TD</h4>
+        <p>Les feuilles de TD et leur corrigé en PDF. Cherchez les exercices avant la séance ; le corrigé
+          sert à vérifier, pas à remplacer la recherche.</p>
+        <a class="lk" href="#td" data-go="td">Voir les TD</a>
+      </article>
+      <article class="bv-card">
+        <h4>Colles</h4>
+        <p>Cochez les chapitres de la semaine et tirez un sujet au hasard (question de cours + exercices),
+          dans les conditions de la colle. Les sujets sont donnés <strong>sans corrigé</strong>.</p>
+        <a class="lk" href="#colle" data-go="colle">Tirer un sujet</a>
+      </article>
+    </div>
+
+    <h3 class="bv-titre">Comment travailler un chapitre</h3>
+    <ol class="bv-etapes">
+      <li><strong>Apprendre le cours.</strong> Définitions, lois et méthodes : c'est la base de tout le reste,
+        et la question de cours de la colle porte dessus.</li>
+      <li><strong>Faire l'atlas.</strong> Traitez chaque item sur papier <em>avant</em> d'afficher la correction.
+        Quand une série est réussie, passez à la série suivante pour vérifier que c'est acquis.</li>
+      <li><strong>Chercher le TD.</strong> Les exercices de TD mobilisent plusieurs notions à la fois :
+        cherchez-les vraiment, puis comparez avec le corrigé.</li>
+      <li><strong>Revoir les mécanismes.</strong> En organique, refaites les mécanismes du chapitre en mode quiz
+        jusqu'à placer toutes les flèches sans aide.</li>
+      <li><strong>Se tester en colle.</strong> Tirez un sujet, préparez-le en temps limité, seul ou à plusieurs,
+        en expliquant à voix haute.</li>
+    </ol>
+
+    <div class="bv-grid bv-grid2">
+      <article class="bv-card">
+        <h4>Les QR codes des polys</h4>
+        <p>Les cours et les atlas imprimés portent des QR codes : flashez-les pour ouvrir directement
+          la correction de l'exercice ou le mécanisme animé correspondant.</p>
+      </article>
+      <article class="bv-card">
+        <h4>Après un DS</h4>
+        <p>Votre bilan individuel indique les points <strong>AR</strong> (à reprendre) et les capacités du programme
+          à retravailler, avec des exercices de TD et d'atlas ciblés : faites-les en priorité.</p>
+      </article>
+    </div>
+  </section>
+  <section id="view-accueil" class="pane" role="tabpanel" aria-labelledby="vb-accueil" hidden>
     <p class="intro">Les chapitres de chimie de PCSI. Pour chacun : l'atlas d'entraînement corrigé, le TD et son corrigé,
       les mécanismes animés et les sujets de colle.</p>
     <ol class="chaps" id="chap-list"></ol>
@@ -1089,7 +1176,10 @@ function init(){
     else if(e.key==='ArrowLeft'){ stopPlay(); go(cur-1); }
   });
   const marquer = h => { try{ history.replaceState(null,'','#'+h) }catch(e){} };
+  $('vb-bienvenue').onclick=()=>{ setView('bienvenue'); marquer('accueil'); };
   $('vb-accueil').onclick=()=>{ setView('accueil'); marquer('chapitres'); };
+  // boutons de la page d'accueil : même effet que l'onglet correspondant
+  document.querySelectorAll('[data-go]').forEach(a=>a.onclick=e=>{ e.preventDefault(); $('vb-'+a.dataset.go).click(); });
   $('vb-meca').onclick=()=>{ setView('meca'); marquer(mk); };
   $('vb-atlas').onclick=()=>openAtlas(atlasCourant || 'pcsi9');
   $('vb-td').onclick=()=>{ setView('td'); marquer('td'); };
@@ -1098,7 +1188,7 @@ function init(){
   selectMech(MECHS[h]?h:'sn2', false);
   renderChapitres();
   initColle();
-  setView('accueil');
+  setView('bienvenue');
   loadIndex().then(router);
   window.addEventListener('hashchange', router);
 }
@@ -1110,13 +1200,14 @@ function router(){
   else if(MECHS[h]){ setView('meca'); if(h!==mk) selectMech(h,false); }
   else if(h==='td') setView('td');
   else if(c){ setView('colle'); if(c[1]) cocherColle([+c[1]]); }
-  else setView('accueil');
+  else if(h==='chapitres') setView('accueil');
+  else setView('bienvenue');
 }
 
 /* ---------- Atlas corrigés ---------- */
 let ATLAS=[], atlasCourant=null;
 const atlasCache={}, atlasSerie={};  // série affichée par atlas (1 = celle des QR codes des polys)
-const VUES=['accueil','meca','atlas','td','colle'];
+const VUES=['bienvenue','accueil','meca','atlas','td','colle'];
 function setView(v){
   for(const x of VUES){ $('view-'+x).hidden = x!==v; $('vb-'+x).setAttribute('aria-selected', x===v); }
   if(v!=='meca') stopPlay();
