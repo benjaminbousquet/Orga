@@ -148,7 +148,8 @@ ul.it li::before{content:"• "}
 .lk.pdf::after{content:" PDF";font-weight:400;opacity:.7;font-size:11px}
 .lk.meca{background:transparent;color:var(--arrow);border-color:var(--arrow);border-radius:999px}
 .lk.off{color:var(--muted);background:transparent;cursor:default;font-weight:400}
-/* générateur de colles */
+/* générateur de colles (désactivable : COLLES dans le script) */
+body.sans-colles .si-colle{display:none!important}
 .cgrid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start}
 @media (max-width:900px){.cgrid{grid-template-columns:minmax(0,1fr)}}
 .cform{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;display:grid;gap:12px;min-width:0}
@@ -261,7 +262,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         <span class="mtab-t">Atlas d'entraînement</span><span class="mtab-s">exercices et corrigés</span></button>
       <button class="mtab" role="tab" id="vb-td" aria-selected="false" aria-controls="view-td">
         <span class="mtab-t">TD</span><span class="mtab-s">énoncés et corrigés en PDF</span></button>
-      <button class="mtab" role="tab" id="vb-colle" aria-selected="false" aria-controls="view-colle">
+      <button class="mtab si-colle" role="tab" id="vb-colle" aria-selected="false" aria-controls="view-colle">
         <span class="mtab-t">Colles</span><span class="mtab-s">générateur de sujets</span></button>
     </nav>
   </header>
@@ -270,7 +271,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <h2>Bienvenue</h2>
       <p>Ce site accompagne le cours de chimie de PCSI. Il rassemble, chapitre par chapitre, de quoi
         <strong>s'entraîner seul</strong> : des exercices courts corrigés, les TD et leurs corrigés, des mécanismes
-        de chimie organique animés et un générateur de sujets de colle. Il fonctionne aussi bien sur téléphone que sur ordinateur.</p>
+        de chimie organique animés<span class="si-colle"> et un générateur de sujets de colle</span>. Il fonctionne aussi bien sur téléphone que sur ordinateur.</p>
     </div>
 
     <h3 class="bv-titre">Ce que vous trouverez sur le site</h3>
@@ -278,7 +279,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <article class="bv-card">
         <h4>Chapitres</h4>
         <p>La liste des chapitres de l'année. Pour chacun, tous les liens au même endroit : atlas, TD, corrigé,
-          mécanismes animés et colle.</p>
+          mécanismes animés<span class="si-colle"> et colle</span>.</p>
         <a class="lk" href="#chapitres" data-go="accueil">Voir les chapitres</a>
       </article>
       <article class="bv-card">
@@ -301,7 +302,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
           Cherchez avant la séance ; le corrigé sert à vérifier, pas à remplacer la recherche.</p>
         <a class="lk" href="#td" data-go="td">Voir les TD</a>
       </article>
-      <article class="bv-card">
+      <article class="bv-card si-colle">
         <h4>Colles</h4>
         <p>Cochez les chapitres de la semaine et tirez un sujet au hasard (question de cours + exercices),
           dans les conditions de la colle. Les sujets sont donnés <strong>sans corrigé</strong>.</p>
@@ -320,7 +321,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         puis comparez avec la correction.</li>
       <li><strong>Revoir les mécanismes.</strong> En organique, refaites les mécanismes du chapitre en mode quiz
         jusqu'à placer toutes les flèches sans aide.</li>
-      <li><strong>Se tester en colle.</strong> Tirez un sujet, préparez-le en temps limité, seul ou à plusieurs,
+      <li class="si-colle"><strong>Se tester en colle.</strong> Tirez un sujet, préparez-le en temps limité, seul ou à plusieurs,
         en expliquant à voix haute.</li>
     </ol>
 
@@ -339,7 +340,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   </section>
   <section id="view-accueil" class="pane" role="tabpanel" aria-labelledby="vb-accueil" hidden>
     <p class="intro">Les chapitres de chimie de PCSI. Pour chacun : l'atlas d'entraînement corrigé, le TD et son corrigé,
-      les mécanismes animés et les sujets de colle.</p>
+      les mécanismes animés<span class="si-colle"> et les sujets de colle</span>.</p>
     <ol class="chaps" id="chap-list"></ol>
   </section>
   <section id="view-tdi" class="pane" role="tabpanel" aria-labelledby="vb-td" hidden>
@@ -1209,7 +1210,7 @@ function init(){
   const h=(location.hash||'').slice(1);
   selectMech(MECHS[h]?h:'sn2', false);
   renderChapitres();
-  initColle();
+  if(COLLES) initColle(); else document.body.classList.add('sans-colles');
   setView('bienvenue');
   Promise.all([loadIndex(), loadTDI()]).then(router);
   $('tdi-retour').onclick=e=>{ e.preventDefault(); $('vb-td').click(); };
@@ -1223,7 +1224,7 @@ function router(){
   else if(MECHS[h]){ setView('meca'); if(h!==mk) selectMech(h,false); }
   else if(h==='td') setView('td');
   else if(/^td-\w+$/.test(h)) openTD('tdi'+h.slice(3));
-  else if(c){ setView('colle'); if(c[1]) cocherColle([+c[1]]); }
+  else if(c && COLLES){ setView('colle'); if(c[1]) cocherColle([+c[1]]); }
   else if(h==='chapitres') setView('accueil');
   else setView('bienvenue');
 }
@@ -1289,7 +1290,7 @@ function renderChapitres(){
     const liens=[lien('Atlas corrigé','',()=>openAtlas(idAtlas(c)),'#atlas-'+idAtlas(c)), ...liensTD(c)];
     for(const k of Object.keys(MECHS).filter(k=>Math.floor(META[k][1])===c.n).sort((a,b)=>META[a][1]-META[b][1]))
       liens.push(lien('▶ '+MECHS[k].tab,'meca',()=>{ setView('meca'); selectMech(k,true); },'#'+k));
-    if(c.colle) liens.push(lien('Sujet de colle','',()=>{ setView('colle'); cocherColle([c.colle]); },'#colle-'+c.colle));
+    if(c.colle && COLLES) liens.push(lien('Sujet de colle','',()=>{ setView('colle'); cocherColle([c.colle]); },'#colle-'+c.colle));
     ul.append(ligneChap(c, liens));
     if(c.td) td.append(ligneChap(c, liensTD(c)));
   }
@@ -1362,6 +1363,9 @@ async function openTD(id){
 }
 
 /* ---------- Générateur de colles (sans corrigé) ---------- */
+// COLLES = false : générateur désactivé (onglet, carte d'accueil, liens « Sujet de colle » masqués).
+// Pour le réactiver : true, et republier le dossier colle/ (colle_web.py).
+const COLLES=false;
 let COLLE=[]; const colleCache={};
 async function initColle(){
   try{ const r=await fetch('colle/index.json',{cache:'no-cache'}); if(!r.ok) throw 0; COLLE=await r.json(); }catch(e){ COLLE=[]; }
