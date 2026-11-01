@@ -1216,14 +1216,14 @@ function init(){
   $('tdi-retour').onclick=e=>{ e.preventDefault(); $('vb-td').click(); };
   window.addEventListener('hashchange', router);
 }
-// #sn2 : mécanisme ; #atlas-pcsi9(-3) : atlas (et exercice) ; #td ; #colle(-9) : générateur (chapitre 9 coché)
+// #sn2 : mécanisme ; #atlas-pcsi9(-3) : atlas (et exercice) ; #td ; #td-9(-3) : TD en ligne (et exercice, QR des TD) ; #colle(-9) : générateur (chapitre 9 coché)
 function router(){
   const h=(location.hash||'').slice(1);
   const m=h.match(/^atlas-([a-z][a-z0-9]*?)(?:-(\d+))?$/), c=h.match(/^colle(?:-(\d+))?$/);
   if(m) openAtlas(m[1], m[2]?+m[2]:null);
   else if(MECHS[h]){ setView('meca'); if(h!==mk) selectMech(h,false); }
   else if(h==='td') setView('td');
-  else if(/^td-\w+$/.test(h)) openTD('tdi'+h.slice(3));
+  else if(/^td-\w+?(-[AB]?\d+)?$/.test(h)){ const t=h.match(/^td-(\w+?)(?:-([AB]?\d+))?$/); openTD('tdi'+t[1], t[2]); }
   else if(c && COLLES){ setView('colle'); if(c[1]) cocherColle([+c[1]]); }
   else if(h==='chapitres') setView('accueil');
   else setView('bienvenue');
@@ -1308,7 +1308,7 @@ async function loadTDI(){
   sel.onchange=()=>openTD(sel.value);
   renderChapitres();
 }
-async function openTD(id){
+async function openTD(id, ex){
   setView('tdi'); tdiCourant=id; $('tdi-select').value=id;
   try{ history.replaceState(null,'','#td-'+id.slice(3)) }catch(e){}
   const body=$('tdi-body');
@@ -1359,7 +1359,9 @@ async function openTD(id){
     });
     body.append(art);
   }
-  window.scrollTo(0,0);
+  const cible=ex && document.getElementById('td-ex-'+ex);
+  if(cible){ cible.scrollIntoView(); try{ history.replaceState(null,'','#td-'+id.slice(3)+'-'+ex) }catch(e){} }
+  else window.scrollTo(0,0);
 }
 
 /* ---------- Générateur de colles (sans corrigé) ---------- */
